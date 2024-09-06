@@ -1,8 +1,17 @@
+"use client"; 
+import { useEffect, useRef } from 'react';
 import Image from "next/image";
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 export default function Home() {
+  const chatBoxRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.focus();
+    }
+  }, []);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
@@ -12,40 +21,25 @@ export default function Home() {
         <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
           <a
             className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
+            href="https://www.oopus.info/blog/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
+            By oopus
           </a>
         </div>
       </div>
-      {/* create a inputbox with multiple lines */}
-      <div className="flex flex-col items-center justify-center w-full max-w-5xl p-8 space-y-8 bg-white rounded-xl shadow-lg dark:bg-zinc-800/30 lg:space-y-0 lg:flex-row lg:gap-8 lg:p-12 lg:bg-gray-200 lg:dark:bg-zinc-800/30">
-      <input className="w-full p-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30" placeholder="Type something here" />
-      <button className="px-8 py-4 text-lg font-semibold text-white bg-blue-500 rounded-lg shadow-lg dark:bg-blue-700">Submit</button>
-      <textarea className="w-full p-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30" placeholder="Type something here" />
-
-      </div>
-
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <div className="flex flex-col items-center justify-center w-full max-w-5xl p-8 space-y-4 bg-white rounded-xl shadow-lg dark:bg-zinc-800/30 lg:space-y-0 lg:gap-4 lg:p-8 lg:bg-gray-200 lg:dark:bg-zinc-800/30">
+        <textarea className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30" placeholder="Put your text here" id="chat-box" ref={chatBoxRef}/>
+        <p className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30">
+        <label className="text-base text-gray-800 dark:text-gray-200">Status: </label>
+        <label className="text-base text-gray-800 dark:text-gray-200" id="status">No Error</label>
+        </p>
+        <p className="flex space-x-4">
+        <button className="px-8 py-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 whitespace-nowrap">Convert</button>
+        <button className="px-8 py-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 whitespace-nowrap">Copy Result</button>
+        </p>
+        <textarea className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6" placeholder="Output" readOnly/>
       </div>
 
       <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
