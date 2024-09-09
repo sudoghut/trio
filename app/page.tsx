@@ -1,9 +1,8 @@
   "use client"; 
   import { useEffect, useRef } from 'react';
-  import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-  import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
   // import * as webllm from "https://esm.run/@mlc-ai/web-llm";
   import * as webllm from "@mlc-ai/web-llm";
+import { pages } from 'next/dist/build/templates/app-page';
 
   export default function Home() {
     const handleSend = () => {
@@ -49,7 +48,8 @@
             if (chatStatsElement) {
               chatStatsElement.textContent = "Cache API not supported";
             }
-          }
+          };
+          window.location.reload();
         });
 
       }
@@ -98,7 +98,7 @@
         const selectedModel = "Qwen2-0.5B-Instruct-q4f16_1-MLC";
         const config = {
           temperature: 1,
-          top_p: 1,
+          top_p: 0.6,
         };
         await engine.reload(selectedModel, config);
       };
@@ -144,13 +144,13 @@
     const onMessageSend = function onMessageSend(): void {
       let messages = [
         {
-          content: "Based on the identified language, generate the output while removing personal bias, vulgar language, and strong emotions, without translating the text into another language.",
+          content: "You are tasked with rewriting text in a neutral, declarative tone. Your objective is to remove all expressions of strong emotions, subjective opinions, and replace any emotionally charged punctuation, such as exclamation marks or emphatic question marks, with neutral alternatives. Preserve the original meaning while ensuring the text cannot be easily linked to the original author's distinctive style. Avoid poetic, exaggerated, or emotionally loaded language. Your output should reflect a calm, objective, and clear tone.",
           role: "system",
         },
       ];
 
       const inputElement = document.getElementById("user-input") as HTMLInputElement;
-      const prompt_prefix = "Generate the output while removing personal bias, vulgar language, and strong emotions, without translating the text into another language. Here is the provided text: "
+      const prompt_prefix = "Rewrite the provided text only in its original language, without translating or altering the meaning. Remove any personal bias, vulgar language, and emotional expressions. If none of these elements are present, return the text exactly as it was provided. Do not translate or change the language in any way. Provide the rewritten text below: "
       const input = prompt_prefix + inputElement.value.trim();
       const message = {
         content: input,
@@ -215,7 +215,7 @@
           handleSend();
         }
         // Detect Copy shortcut for both Windows (Ctrl+C) and Mac (Cmd+C)
-        if ((event.ctrlKey && event.key === 'c') || (event.metaKey && event.key === 'c')) {
+        if ((event.ctrlKey && event.shiftKey && event.key === 'c') || (event.metaKey && event.shiftKey && event.key === 'c')) {
           handleCopy();
         }
       };
