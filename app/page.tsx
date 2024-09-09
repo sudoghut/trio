@@ -14,6 +14,7 @@
       const copyButton = document.getElementById('copy') as HTMLButtonElement;
       copyButton?.click();
     };
+
     const chatBoxRef = useRef<HTMLTextAreaElement>(null);
     interface EngineProgressReport {
       progress: number;
@@ -29,7 +30,29 @@
       if (sendButton) {
         sendButton.disabled = true;
         sendButton.addEventListener("click", onMessageSend);
-      }  
+      }
+      
+      const clearCacheButton = document.getElementById("clear-cache") as HTMLButtonElement;
+      if (clearCacheButton) {
+        clearCacheButton.addEventListener("click", async () => {
+          if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            cacheNames.forEach(async (cacheName) => {
+              await caches.delete(cacheName);
+            });
+            const chatStatsElement = document.getElementById("status");
+            if (chatStatsElement) {
+              chatStatsElement.textContent = 'Cache Storage cleared';
+            }
+          } else {
+            const chatStatsElement = document.getElementById("status");
+            if (chatStatsElement) {
+              chatStatsElement.textContent = "Cache API not supported";
+            }
+          }
+        });
+
+      }
 
       const copyButton = document.getElementById("copy") as HTMLButtonElement;
       if (copyButton) {
@@ -216,8 +239,9 @@
           <label className="text-sm text-gray-800 dark:text-gray-200" id="status">No Error</label>
           </p>
           <p className="flex space-x-4">
-          <button className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 whitespace-nowrap" id="send">Convert</button>
-          <button className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 whitespace-nowrap" id="copy">Copy Result</button>
+          <button className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 whitespace-nowrap transform active:scale-95 transition-transform duration-150" id="send">Convert</button>
+          <button className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 whitespace-nowrap transform active:scale-95 transition-transform duration-150" id="copy">Copy Result</button>
+          <button className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-yellow-700 whitespace-nowrap transform active:scale-95 transition-transform duration-150" id="clear-cache">Clear Cache</button>
           </p>
           <textarea className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6" id="chat-box" placeholder="Output" readOnly/>
         </div>
