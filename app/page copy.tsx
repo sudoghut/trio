@@ -2,9 +2,17 @@
   import { useEffect, useRef } from 'react';
   // import * as webllm from "https://esm.run/@mlc-ai/web-llm";
   import * as webllm from "@mlc-ai/web-llm";
-  import StatusAndCleanButton from './components/statusAndCleanButton';
 
   export default function Home() {
+    const handleSend = () => {
+      const sendButton = document.getElementById('send') as HTMLButtonElement;
+      sendButton?.click();
+    };
+    const handleCopy = () => {
+      const copyButton = document.getElementById('copy') as HTMLButtonElement;
+      copyButton?.click();
+    };
+
     const chatBoxRef = useRef<HTMLTextAreaElement>(null);
     interface EngineProgressReport {
       progress: number;
@@ -12,9 +20,9 @@
     }
     const engine = new webllm.MLCEngine();
     const runOnPageLoad = () => {
-      // if (chatBoxRef.current) {
-      //   chatBoxRef.current.focus();
-      // }
+      if (chatBoxRef.current) {
+        chatBoxRef.current.focus();
+      }
 
       const sendButton = document.getElementById("send") as HTMLButtonElement;
       if (sendButton) {
@@ -22,6 +30,29 @@
         sendButton.addEventListener("click", onMessageSend);
       }
       
+      const clearCacheButton = document.getElementById("clear-cache") as HTMLButtonElement;
+      if (clearCacheButton) {
+        clearCacheButton.addEventListener("click", async () => {
+          if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            cacheNames.forEach(async (cacheName) => {
+              await caches.delete(cacheName);
+            });
+            const chatStatsElement = document.getElementById("status");
+            if (chatStatsElement) {
+              chatStatsElement.textContent = 'Cache Storage cleared';
+            }
+          } else {
+            const chatStatsElement = document.getElementById("status");
+            if (chatStatsElement) {
+              chatStatsElement.textContent = "Cache API not supported";
+            }
+          };
+          window.location.reload();
+        });
+
+      }
+
       const copyButton = document.getElementById("copy") as HTMLButtonElement;
       if (copyButton) {
         copyButton.addEventListener("click", () => {
@@ -155,6 +186,26 @@
       streamingGenerating(messages, updateLastMessage, onFinishGenerating, console.error);
     };
     
+    const appendMessage = (message: { content: string; role: string }) => {
+      const chatBox = document.getElementById("chat-box") as HTMLElement;
+      const container = document.createElement("div");
+      container.classList.add("message-container");
+      
+      const newMessage = document.createElement("div");
+      newMessage.classList.add("message");
+      newMessage.textContent = message.content;
+    
+      if (message.role === "user") {
+        container.classList.add("user");
+      } else {
+        container.classList.add("assistant");
+      }
+    
+      container.appendChild(newMessage);
+      chatBox?.appendChild(container);
+      chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
+    };
+    
     const updateLastMessage = (content: string) => {
       const chatBox = document.getElementById("chat-box") as HTMLTextAreaElement;
       if (chatBox) {
@@ -164,23 +215,46 @@
     
     useEffect(() => {
       runOnPageLoad();
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if ((event.ctrlKey && event.key === 'Enter') ||  (event.metaKey && event.key === 'Enter')) {
+          handleSend();
+        }
+        // Detect Copy shortcut for both Windows (Ctrl+Shift+C) and Mac (Cmd+Shift+C)
+        if ((event.altKey && event.shiftKey && event.code === 'KeyC') || (event.ctrlKey && event.shiftKey && event.code === 'KeyC') || (event.metaKey && event.shiftKey && event.code === 'KeyC')) {
+          handleCopy();
+          // console.log('Ctrl + Shift + C pressed!');
+        }
+      };
+      // console.log(event);
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     }, []); // Empty dependency array ensures it runs only once on mount
 
     return (
       <main className="flex min-h-screen flex-col items-center justify-between lg:p-24 md:p-24 sm:p-5">
         <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-          <p className="fixed left-0 top-0 flex w-full justify-center bg-gradient-to-b pb-6 pt-8 backdrop-blur-2xl dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:p-4 text-lg">
-          TRIO - by oopus
+          <p className="fixed left-0 top-0 flex w-full justify-center bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 text-lg">
+          Blend into the Crowd - by oopus
           </p>
         </div>
         <div className="flex flex-col items-center justify-center w-full max-w-5xl p-8 space-y-4 bg-white rounded-xl shadow-lg dark:bg-zinc-800/30 lg:space-y-0 lg:gap-4 lg:p-8 lg:bg-gray-200 lg:dark:bg-zinc-800/30">
-          <StatusAndCleanButton />
           <textarea className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30" id="user-input" placeholder="Put your text here" ref={chatBoxRef}/>
+          <p className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30">
+          <label className="text-sm text-gray-800 dark:text-gray-200">Status: </label>
+          <label className="text-sm text-gray-800 dark:text-gray-200" id="status">No Error</label>
+          </p>
           <p className="flex space-x-4">
           <button className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 whitespace-nowrap transform active:scale-95 transition-transform duration-150" id="send">Convert</button>
           <button className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 whitespace-nowrap transform active:scale-95 transition-transform duration-150" id="copy">Copy Result</button>
+          <button className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-yellow-700 whitespace-nowrap transform active:scale-95 transition-transform duration-150" id="clear-cache">Clear Cache</button>
           </p>
           <textarea className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6" id="chat-box" placeholder="Output" readOnly/>
+        </div>
+
+        <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
+
         </div>
       </main>
     );
