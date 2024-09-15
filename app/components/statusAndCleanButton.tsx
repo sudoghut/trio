@@ -1,5 +1,13 @@
+import React, { useEffect, useRef } from 'react';
+
 const StatusAndCleanButton = () => {
-    const clearCacheButton = document.getElementById("clear-cache") as HTMLButtonElement;
+  const clearCacheButtonRef = useRef<HTMLButtonElement>(null);
+  const chatStatsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const clearCacheButton = clearCacheButtonRef.current;
+    const chatStatsElement = chatStatsRef.current;
+
     if (clearCacheButton) {
       clearCacheButton.addEventListener("click", async () => {
         if ('caches' in window) {
@@ -7,12 +15,10 @@ const StatusAndCleanButton = () => {
           cacheNames.forEach(async (cacheName) => {
             await caches.delete(cacheName);
           });
-          const chatStatsElement = document.getElementById("status");
           if (chatStatsElement) {
             chatStatsElement.textContent = 'Cache Storage cleared';
           }
         } else {
-          const chatStatsElement = document.getElementById("status");
           if (chatStatsElement) {
             chatStatsElement.textContent = "Cache API not supported";
           }
@@ -21,6 +27,7 @@ const StatusAndCleanButton = () => {
         // window.location.reload();
       });
     }
+  }, []);
     return (
         <div className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 space-y-4">
             <p>
