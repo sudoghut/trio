@@ -1,4 +1,3 @@
-// TaskList.tsx
 import React from 'react';
 
 interface TaskListProps {
@@ -8,9 +7,11 @@ interface TaskListProps {
 const TaskList: React.FC<TaskListProps> = ({ onSelectTask }) => {
     const tasks = [
         "No Task",
-        "Complete the assigned project",
-        "Review the code implementation",
-        "Submit the progress report"
+        "Neutral Rewrite",
+        "Clean text",
+        "Redo previous cell",
+        "Consolidate results above",
+        "Customized prompt",
     ];
 
     return (

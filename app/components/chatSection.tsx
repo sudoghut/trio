@@ -187,7 +187,7 @@ const ChatSection = () => {
                     )}
                 </div>
                 <label className="text-lg text-gray-800 dark:text-gray-200">Task: </label>
-                <label className="text-lg text-gray-800 dark:text-gray-200" id="task-name">{selectedTask || "No Task"}</label>    
+                <label className="text-lg text-gray-800 dark:text-gray-200">{selectedTask || "No Task"}</label>    
                 <button onClick={handleLoadTasks} className="p-1 ml-5 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 whitespace-nowrap transform active:scale-95 transition-transform duration-150">{showTasks ? "Hide Tasks" : "Load Tasks"}</button>
             </div>
             <div className="flex space-x-4">
