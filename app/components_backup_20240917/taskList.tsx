@@ -2,7 +2,6 @@ import React from 'react';
 
 interface TaskListProps {
     onSelectTask: (task: string) => void; // Function to handle task selection
-
 }
 
 const TaskList: React.FC<TaskListProps> = ({ onSelectTask }) => {
@@ -23,7 +22,7 @@ const TaskList: React.FC<TaskListProps> = ({ onSelectTask }) => {
                     <li key={index} className="flex justify-between items-center">
                         {task}
                         <button 
-                            onClick={() => {onSelectTask(task)}} // Pass the selected task title
+                            onClick={() => onSelectTask(task)} // Pass the selected task title
                             className="ml-4 text-sm text-white bg-green-500 rounded-md p-1 dark:bg-green-700 hover:bg-green-600"
                         >
                             Select
