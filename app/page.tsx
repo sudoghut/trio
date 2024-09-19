@@ -6,9 +6,10 @@ import ChatSection from './components/chatSection';
 import TaskList from './components/taskList';
 import * as webllm from "@mlc-ai/web-llm";
 
+const engine = new webllm.MLCEngine();
+
 export default function Home() {
   const chatBoxRef = useRef<HTMLTextAreaElement>(null);
-
   const [sectionStates, setSectionStates] = useState([
     { selectedTask: 'No Task', inputValue: '', outputValue: '' },
     { selectedTask: 'No Task', inputValue: '', outputValue: '' },
@@ -17,61 +18,15 @@ export default function Home() {
 
   const [taskListVisibility, setTaskListVisibility] = useState([false, false, false]); // Array of booleans for task list visibility
 
-  const taskFunctionMap: Record<string, (input: string) => string> = {
-    "Neutral Rewrite": (input) => {
+  const taskFunctionMap: Record<string, (input: string, index: number) => void> = {
+    "Neutral Rewrite": (input, index) => {
+      let output = "";
+
       interface EngineProgressReport {
         progress: number;
         text: string;
-      }
-      
-      const engine = new webllm.MLCEngine();
-  
-      const onMessageSend = function onMessageSend(): void {
-        let messages = [
-          {
-            content: "You are a useful llm model",
-            role: "system",
-          },
-        ];
-        const inputElement = document.getElementById("user-input") as HTMLInputElement;
-        const input = inputElement ? inputElement.value.trim() : '';
-        const message = {
-          content: input,
-          role: "user",
-        };
-        messages.push(message);
-  
-        if (input.length === 0) {
-          return;
-        }
-        
-        const sendButton = document.getElementById("send") as HTMLButtonElement;
-        sendButton.disabled = true;
-  
-        const onFinishGenerating = (finalMessage: any, usage: any) => {
-          updateLastMessage(finalMessage);
-          sendButton.disabled = false;
-  
-          const usageText =
-            `prompt_tokens: ${usage.prompt_tokens}, ` +
-            `completion_tokens: ${usage.completion_tokens}, ` +
-            `prefill: ${usage.extra.prefill_tokens_per_s.toFixed(4)} tokens/sec, ` +
-            `decoding: ${usage.extra.decode_tokens_per_s.toFixed(4)} tokens/sec`;
-  
-          const chatStatsElement = document.getElementById("status");
-          if (chatStatsElement) {
-            chatStatsElement.textContent = usageText;
-          }
-        };
-  
-        streamingGenerating(messages, updateLastMessage, onFinishGenerating, console.error);
       };
-  
-      const sendButton = document.getElementById("send") as HTMLButtonElement;
-      if (sendButton) {
-        sendButton.addEventListener("click", onMessageSend);
-      }
-  
+
       const copyButton = document.getElementById("copy") as HTMLButtonElement;
       if (copyButton) {
         copyButton.addEventListener("click", () => {
@@ -107,7 +62,6 @@ export default function Home() {
           downloadStatus.textContent = report.text;
         }
       };
-  
       engine.setInitProgressCallback(updateEngineInitProgressCallback);
   
       const initializeWebLLMEngine = async (): Promise<void> => {
@@ -116,15 +70,9 @@ export default function Home() {
           temperature: 1,
           top_p: 0.6,
         };
+        console.log(1);
         await engine.reload(selectedModel, config);
       };
-  
-      initializeWebLLMEngine().then(() => {
-        const sendButton = document.getElementById("send") as HTMLButtonElement;
-        if (sendButton) {
-          sendButton.disabled = false;
-        }
-      });
   
       const streamingGenerating = async (
         messages: any[],
@@ -132,6 +80,7 @@ export default function Home() {
         onFinish: (finalMessage: string, usage: any) => void,
         onError: (error: any) => void
       ): Promise<void> => {
+        await initializeWebLLMEngine();
         try {
           let curMessage = "";
           let usage: any;
@@ -160,18 +109,54 @@ export default function Home() {
       };
   
       const updateLastMessage = (content: string) => {
-        const chatBox = document.getElementById("chat-box") as HTMLTextAreaElement;
-        if (chatBox) {
-          chatBox.value = content;
+        output = content;
+        // console.log(content);
+        setSectionStates(prevStates => {
+          const newSectionStates = [...prevStates];
+          newSectionStates[index].outputValue = output; // Update output value continuously
+          return newSectionStates;
+        });
+      };
+
+      let messages = [
+        {
+          content: "You are a useful llm model",
+          role: "system",
+        },
+      ];
+      const message = {
+        content: input,
+        role: "user",
+      };
+      messages.push(message);
+
+      if (input.length === 0) {
+        return;
+      }
+      
+
+      const onFinishGenerating = (finalMessage: any, usage: any) => {
+        updateLastMessage(finalMessage);
+
+        const usageText =
+          `prompt_tokens: ${usage.prompt_tokens}, ` +
+          `completion_tokens: ${usage.completion_tokens}, ` +
+          `prefill: ${usage.extra.prefill_tokens_per_s.toFixed(4)} tokens/sec, ` +
+          `decoding: ${usage.extra.decode_tokens_per_s.toFixed(4)} tokens/sec`;
+
+        const chatStatsElement = document.getElementById("status");
+        if (chatStatsElement) {
+          chatStatsElement.textContent = usageText;
         }
       };
-  
-      return `Neutral rewrite: ${input}`},
-    "Clean text": (input) => `Cleaned text: ${input}`,
-    "Redo previous cell": (input) => `Redo previous cell: ${input}`,
-    "Consolidate results above": (input) => `Consolidated: ${input}`,
-    "Customized prompt": (input) => `Customized: ${input}`,
-    "No Task": (input) => input
+
+      streamingGenerating(messages, updateLastMessage, onFinishGenerating, console.error);
+    },
+    "Clean text": (input, index) => `Cleaned text: ${input}`,
+    "Redo previous cell": (input, index) => `Redo previous cell: ${input}`,
+    "Consolidate results above": (input, index) => `Consolidated: ${input}`,
+    "Customized prompt": (input, index) => `Customized: ${input}`,
+    "No Task": (input, index) => input
   };
 
   const runTaskForSection = (index: number) => {
@@ -180,11 +165,12 @@ export default function Home() {
     const input = currentSection.inputValue;
 
     if (selectedTask && taskFunctionMap[selectedTask]) {
-      const output = taskFunctionMap[selectedTask](input);
-
       const newSectionStates = [...sectionStates];
-      newSectionStates[index] = { ...currentSection, outputValue: output };
+      // newSectionStates[index] = { ...currentSection, outputValue: output };
       setSectionStates(newSectionStates);
+      if (selectedTask && taskFunctionMap[selectedTask]) {
+        taskFunctionMap[selectedTask](input, index);
+      }
     }
   };
 
