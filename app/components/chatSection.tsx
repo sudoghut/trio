@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as webllm from "@mlc-ai/web-llm";
 
 interface ChatSectionProps {
@@ -9,8 +9,30 @@ interface ChatSectionProps {
 
 const ChatSection: React.FC<ChatSectionProps> = ({ selectedTask, onRunTask, outputValue }) => {
   const chatBoxRef = useRef<HTMLTextAreaElement>(null);
-  useEffect(() => {
-  }, []);
+  
+  const copyText = () => {
+    const chatBox = chatBoxRef.current;
+    if (chatBox) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(chatBox.value)
+          .then(() => {
+            const chatStatsElement = document.getElementById("status");
+            if (chatStatsElement) {
+              chatStatsElement.textContent = 'Text copied to clipboard';
+            }
+          })
+          .catch(err => {
+            const chatStatsElement = document.getElementById("status");
+            if (chatStatsElement) {
+              chatStatsElement.textContent = "Failed to copy text";
+            }
+            console.error('Failed to copy text: ', err);
+          });
+      } else {
+        console.error("Clipboard API not supported");
+      }
+    }
+  };
 
   return (
     <div className="w-full text-lg rounded-lg h-30 mt-6">
@@ -19,11 +41,11 @@ const ChatSection: React.FC<ChatSectionProps> = ({ selectedTask, onRunTask, outp
         <label className="text-lg text-gray-800 dark:text-gray-200">{selectedTask || "No Task"}</label>
       </div>
       <div className="flex space-x-4 ">
-        <button className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700">Run Me&Below</button>
-        <button onClick={onRunTask} className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700">Run Me</button>
-        <button className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700" id="copy">Copy Result</button>
+        <button onClick={onRunTask} className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150">Run Me</button>
+        <button onClick={copyText} className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150">Copy Result</button>
       </div>
       <textarea
+        ref={chatBoxRef}
         className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6"
         value={outputValue}
         placeholder="Output"
