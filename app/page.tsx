@@ -164,24 +164,30 @@ export default function Home() {
       const llmName = "Qwen2-1.5B-Instruct-q4f16_1-MLC";
       const temperature = 0.8;
       const top_p = 0.6;
-      const systemPrompt = "You are tasked with rewriting text in a neutral, declarative tone...";
-      const prompt = "Rewrite the provided text only in its original language...";
+      const systemPrompt = "You are tasked with rewriting text in a neutral, declarative tone. Your objective is to remove all expressions of strong emotions, subjective opinions, and replace any emotionally charged punctuation, such as exclamation marks or emphatic question marks, with neutral alternatives. Preserve the original meaning while ensuring the text cannot be easily linked to the original author's distinctive style. Avoid poetic, exaggerated, or emotionally loaded language. Your output should reflect a calm, objective, and clear tone.";
+      const prompt = "Rewrite the provided text only in its original language, without translating or altering the meaning. Remove any personal bias, vulgar language, and emotional expressions. If none of these elements are present, return the text exactly as it was provided. Do not translate or change the language in any way. Provide the rewritten text below: \n";
   
       await runLLMEngine(input, index, systemPrompt, prompt, llmName, temperature, top_p);
     },
-    "Clean text": async (input, index) => {
-      // Implement the clean text functionality
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating some async work
+    "Clean Text": async (input, index) => {
+      console.log("3-1 Starting Neutral Rewrite");
+      const llmName = "Qwen2-1.5B-Instruct-q4f16_1-MLC";
+      const temperature = 0.8;
+      const top_p = 0.6;
+      const systemPrompt = "Your task is to clean and polish the input text by correcting grammatical errors, fixing punctuation, removing extra spaces and unnecessary line breaks, and ensuring the text flows smoothly. Maintain the original wording and sentence structure as closely as possible to preserve the author's intent. Do not add new content or alter the meaning of the text.";
+      const prompt = "Please clean the text by correcting grammar, fixing punctuation, removing extra spaces and line breaks, and keeping the original words and sentence structure as much as possible: ";
+  
+      await runLLMEngine(input, index, systemPrompt, prompt, llmName, temperature, top_p);
     },
-    "Redo previous cell": async (input, index) => {
+    "Redo Previous Cell": async (input, index) => {
       // Implement the redo previous cell functionality
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating some async work
     },
-    "Consolidate results above": async (input, index) => {
+    "Consolidate Results Above": async (input, index) => {
       // Implement the consolidate results functionality
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating some async work
     },
-    "Customized prompt": async (input, index) => {
+    "Customized Prompt": async (input, index) => {
       const llmName = "Qwen2-1.5B-Instruct-q4f16_1-MLC";
       const temperature = 0.8;
       const top_p = 0.6;
@@ -216,7 +222,10 @@ export default function Home() {
       const newSectionStates = [...sectionStates];
       setSectionStates(newSectionStates);
       return taskFunctionMap[selectedTask](input, index);
+    } else {
+      alert("Incorrect task:" + selectedTask);
     }
+
   };
 
   const handleTaskSelect = (index: number, task: string) => {
