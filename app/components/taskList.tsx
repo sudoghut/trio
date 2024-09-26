@@ -17,7 +17,7 @@ const TaskList: React.FC<TaskListProps> = ({tasks, onSelectTask }) => {
                             onClick={() => {onSelectTask(task)}} // Pass the selected task title
                             className="ml-4 text-sm text-white bg-green-500 rounded-md p-1 dark:bg-green-700 hover:bg-green-600 active:scale-95 transition-transform duration-150"
                         >
-                            Select ({task.charAt(0).toUpperCase()})
+                            Select ({task.substring(0, 2).toUpperCase()})
                         </button>
                     </li>
                 ))}

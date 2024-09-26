@@ -9,6 +9,8 @@ import * as webllm from "@mlc-ai/web-llm";
 const engine = new webllm.MLCEngine();
 
 export default function Home() {
+  // const llmName = "Llama-3.2-1B-Instruct-q4f32_1-MLC";
+  const llmName = "Qwen2.5-1.5B-Instruct-q4f32_1-MLC";
 
   const runAllTasks = async () => {
     for (let i = 0; i < sectionStates.length; i++) {
@@ -150,9 +152,7 @@ export default function Home() {
           updatedStates[index + 1].inputValue = output; // Update output value continuously
         }
         console.log("1-10 New Section States - final");
-        const newSectionStates = await setSectionStatesAsync(updatedStates);
-        return newSectionStates;
-      
+        await setSectionStatesAsync(updatedStates);      
     };
 
     await streamingGenerating(messages, updateLastMessage, onFinishGenerating, console.error);
@@ -161,7 +161,6 @@ export default function Home() {
   const taskFunctionMap: Record<string, (input: string, index: number) => Promise<void>> = {
     "Neutral Rewrite": async (input, index) => {
       console.log("1-1 Starting Neutral Rewrite");
-      const llmName = "Qwen2-1.5B-Instruct-q4f16_1-MLC";
       const temperature = 0.8;
       const top_p = 0.6;
       const systemPrompt = "You are tasked with rewriting text in a neutral, declarative tone. Your objective is to remove all expressions of strong emotions, subjective opinions, and replace any emotionally charged punctuation, such as exclamation marks or emphatic question marks, with neutral alternatives. Preserve the original meaning while ensuring the text cannot be easily linked to the original author's distinctive style. Avoid poetic, exaggerated, or emotionally loaded language. Your output should reflect a calm, objective, and clear tone.";
@@ -171,7 +170,6 @@ export default function Home() {
     },
     "Clean Text": async (input, index) => {
       console.log("3-1 Starting Neutral Rewrite");
-      const llmName = "Qwen2-1.5B-Instruct-q4f16_1-MLC";
       const temperature = 0.8;
       const top_p = 0.6;
       const systemPrompt = "Your task is to clean and polish the input text by correcting grammatical errors, fixing punctuation, removing extra spaces and unnecessary line breaks, and ensuring the text flows smoothly. Maintain the original wording and sentence structure as closely as possible to preserve the author's intent. Do not add new content or alter the meaning of the text.";
@@ -180,15 +178,26 @@ export default function Home() {
       await runLLMEngine(input, index, systemPrompt, prompt, llmName, temperature, top_p);
     },
     "Redo Previous Cell": async (input, index) => {
+      if (index - 1 >= 0) {
+        const updatedStates = [...sectionStates];
+        const previousTaskName = updatedStates[index - 1].selectedTask;
+        const previousInput = updatedStates[index - 1].inputValue;
+        updatedStates[index].inputValue = previousInput;
+        await setSectionStatesAsync(updatedStates);
+        if (taskFunctionMap[previousTaskName]) {
+          await taskFunctionMap[previousTaskName](previousInput, index);
+        }
+      } else {
+        await taskFunctionMap["No Task"](input, index);
+      }
       // Implement the redo previous cell functionality
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating some async work
     },
-    "Consolidate Results Above": async (input, index) => {
+    "Consolidate Previous Cell": async (input, index) => {
       // Implement the consolidate results functionality
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating some async work
     },
     "Customized Prompt": async (input, index) => {
-      const llmName = "Qwen2-1.5B-Instruct-q4f16_1-MLC";
       const temperature = 0.8;
       const top_p = 0.6;
       const systemPrompt = "You are a helpful AI assistant";
