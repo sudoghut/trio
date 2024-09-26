@@ -18,7 +18,6 @@ export default function Home() {
     }
   };
 
-  // const chatBoxRef = useRef<HTMLTextAreaElement>(null);
   const [sectionStates, setSectionStates] = useState([
     { selectedTask: 'No Task', inputValue: '', outputValue: '' },
     { selectedTask: 'No Task', inputValue: '', outputValue: '' },
@@ -35,13 +34,27 @@ export default function Home() {
     newStatus: SectionState[]
   ): Promise<SectionState[]> => {
     return new Promise((resolve) => {
-      setSectionStates(newStatus); // update state with the correct type
+      setSectionStates(newStatus);
       resolve(newStatus);
     });
   };
   
 
-  const [taskListVisibility, setTaskListVisibility] = useState([false, false, false]); // Array of booleans for task list visibility
+  const [taskListVisibility, setTaskListVisibility] = useState([false, false, false]);
+
+  const runTaskForSection = async (index: number): Promise<void> => {
+    console.log(`Running task for section ${index}`);
+    const currentSection = sectionStates[index];
+    const selectedTask = currentSection.selectedTask;
+    const input = currentSection.inputValue;
+  
+    if (selectedTask && taskFunctionMap[selectedTask]) {
+      await taskFunctionMap[selectedTask](input, index);
+    } else {
+      alert("Incorrect task:" + selectedTask);
+    }
+
+  };
 
   const runLLMEngine = async (input: string, index: number, systemPrompt: string, prompt: string, llmName: string, llmTemp: number, llmTopP: number): Promise<void> => {
     console.log("1-2 Running LLM Engine");
@@ -178,7 +191,7 @@ export default function Home() {
       await runLLMEngine(input, index, systemPrompt, prompt, llmName, temperature, top_p);
     },
     "Redo Previous Cell": async (input, index) => {
-      if (index - 1 >= 0) {
+      if (index == 2) {
         const updatedStates = [...sectionStates];
         const previousTaskName = updatedStates[index - 1].selectedTask;
         const previousInput = updatedStates[index - 1].inputValue;
@@ -187,7 +200,36 @@ export default function Home() {
         if (taskFunctionMap[previousTaskName]) {
           await taskFunctionMap[previousTaskName](previousInput, index);
         }
+      }else if (index == 3){
+        // Prepare for Task 2
+        const updatedStates = [...sectionStates];
+        let previousTaskName = updatedStates[index - 1].selectedTask;
+        let previousInput = updatedStates[index - 1].inputValue;
+        // If Task 2 is also a redo task
+        if (previousTaskName == "Redo Previous Cell") {
+          // When Task 2 is a redo task, whatever the Task 1 is,
+          // Task 3 will take task 1's input
+          previousInput = updatedStates[index - 2].inputValue;
+          // Task 1 is also a redo task
+          if (previousTaskName == "Redo Previous Cell") {
+            previousTaskName = "No Task";
+          }else{
+          // Task 1 is not a redo task
+            previousTaskName = updatedStates[index - 2].selectedTask;
+          } 
+          } else {
+            // Task 2 is not a redo task,
+            // has prepared in "Prepare for Task 2"
+        }
+        // Update the current input value. Don't copy
+        // the redo task name to the current task
+        updatedStates[index].inputValue = previousInput;
+        await setSectionStatesAsync(updatedStates);
+        if (taskFunctionMap[previousTaskName]) {
+          await taskFunctionMap[previousTaskName](previousInput, index);
+        }
       } else {
+        // index == 1
         await taskFunctionMap["No Task"](input, index);
       }
       // Implement the redo previous cell functionality
@@ -221,21 +263,7 @@ export default function Home() {
   const taskNames: string[] = Object.keys(taskFunctionMap);
 
 
-  const runTaskForSection = async (index: number): Promise<void> => {
-    console.log(`Running task for section ${index}`);
-    const currentSection = sectionStates[index];
-    const selectedTask = currentSection.selectedTask;
-    const input = currentSection.inputValue;
-  
-    if (selectedTask && taskFunctionMap[selectedTask]) {
-      const newSectionStates = [...sectionStates];
-      setSectionStates(newSectionStates);
-      return taskFunctionMap[selectedTask](input, index);
-    } else {
-      alert("Incorrect task:" + selectedTask);
-    }
 
-  };
 
   const handleTaskSelect = (index: number, task: string) => {
     const newSectionStates = [...sectionStates];
