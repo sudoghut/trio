@@ -42,6 +42,18 @@ export default function Home() {
 
   const [taskListVisibility, setTaskListVisibility] = useState([false, false, false]);
 
+  const [highlightedSection, setHighlightedSection] = useState<number | null>(null);
+  const setHighlightedSectionAsync = (
+    newHighlightedSection: number | null
+  ): Promise<number | null> => {
+    return new Promise((resolve) => {
+      setHighlightedSection(newHighlightedSection); // This should be the direct state setter
+      resolve(newHighlightedSection);
+    });
+  };
+  
+  
+
   const runTaskForSection = async (index: number): Promise<void> => {
     console.log(`Running task for section ${index}`);
     const currentSection = sectionStates[index];
@@ -49,10 +61,13 @@ export default function Home() {
     const input = currentSection.inputValue;
   
     if (selectedTask && taskFunctionMap[selectedTask]) {
+      await setHighlightedSectionAsync(index);
       await taskFunctionMap[selectedTask](input, index);
     } else {
       alert("Incorrect task:" + selectedTask);
     }
+
+    await setHighlightedSectionAsync(null);
 
   };
 
@@ -191,30 +206,41 @@ export default function Home() {
       await runLLMEngine(input, index, systemPrompt, prompt, llmName, temperature, top_p);
     },
     "Redo Previous Cell": async (input, index) => {
-      if (index == 2) {
+      console.log("4-1 Starting Neutral Rewrite for Task" + index);
+      if (index == 1) {
+        console.log("4-2 Start index 2 for Task" + index);
         const updatedStates = [...sectionStates];
         const previousTaskName = updatedStates[index - 1].selectedTask;
         const previousInput = updatedStates[index - 1].inputValue;
         updatedStates[index].inputValue = previousInput;
+        console.log("4-3 Update the input value for Task" + index);
         await setSectionStatesAsync(updatedStates);
         if (taskFunctionMap[previousTaskName]) {
+          console.log("4-4 Run Task" + previousTaskName + " for Task" + index);
           await taskFunctionMap[previousTaskName](previousInput, index);
         }
-      }else if (index == 3){
+      }else if (index == 2){
         // Prepare for Task 2
+        console.log("4-5 Start index 3 for Task" + index)
         const updatedStates = [...sectionStates];
         let previousTaskName = updatedStates[index - 1].selectedTask;
         let previousInput = updatedStates[index - 1].inputValue;
         // If Task 2 is also a redo task
+        console.log("4-6 Got the previous task name and input value from Task2 for Task" + index);
         if (previousTaskName == "Redo Previous Cell") {
           // When Task 2 is a redo task, whatever the Task 1 is,
           // Task 3 will take task 1's input
+          console.log("4-7 Finding Task 2 is also a redo task for Task" + index);
+          previousTaskName = updatedStates[index - 2].selectedTask;
           previousInput = updatedStates[index - 2].inputValue;
+          console.log("4-8 Finish finding the task name and input value from Task1 for Task" + index);
           // Task 1 is also a redo task
           if (previousTaskName == "Redo Previous Cell") {
+            console.log("4-9 Task 1 is also a redo task for Task" + index);
             previousTaskName = "No Task";
           }else{
           // Task 1 is not a redo task
+            console.log("4-10 Task 1 is not a redo task for Task" + index);
             previousTaskName = updatedStates[index - 2].selectedTask;
           } 
           } else {
@@ -223,13 +249,19 @@ export default function Home() {
         }
         // Update the current input value. Don't copy
         // the redo task name to the current task
+        console.log("4-11 Update the input value for Task" + index);
         updatedStates[index].inputValue = previousInput;
+        console.log("4-12 Update task list for Task" + index);
         await setSectionStatesAsync(updatedStates);
         if (taskFunctionMap[previousTaskName]) {
+          console.log("4-13 Run Task" + previousTaskName + " for Task" + index);
+          console.log("4-13.1 Previous Task Name: " + previousTaskName);
+          console.log("4-13.2 Previous Input: " + previousInput);
           await taskFunctionMap[previousTaskName](previousInput, index);
         }
       } else {
         // index == 1
+        console.log("4-14 Throw to No Task for Task" + index);
         await taskFunctionMap["No Task"](input, index);
       }
       // Implement the redo previous cell functionality
@@ -300,7 +332,8 @@ export default function Home() {
         <button className="p-2 w-full text-lg font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150" onClick={runAllTasks}>Run All</button>
 
         {/* ChatSection 1 */}
-        <div className='w-full p-2 space-y-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6'>
+        {/* <div className='w-full p-2 space-y-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6'> */}
+        <div className={`w-full p-2 space-y-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6 ${highlightedSection === 0 ? 'border-2 border-yellow-400' : ''}`}>
           <label className="text-lg font-bold text-gray-800 dark:text-gray-200">Task 1</label>
           <textarea
             className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 bold"
@@ -323,7 +356,7 @@ export default function Home() {
         </div>
 
         {/* ChatSection 2 */}
-        <div className='w-full space-y-4 p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6'>
+        <div className={`w-full p-2 space-y-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6 ${highlightedSection === 1 ? 'border-2 border-yellow-400' : ''}`}>
           <label className="text-lg font-bold text-gray-800 dark:text-gray-200">Task 2</label>
           <textarea
             className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30"
@@ -346,7 +379,7 @@ export default function Home() {
         </div>
 
         {/* ChatSection 3 */}
-        <div className='w-full space-y-4 p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6'>
+        <div className={`w-full p-2 space-y-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6 ${highlightedSection === 2 ? 'border-2 border-yellow-400' : ''}`}>
           <label className="text-lg font-bold text-gray-800 dark:text-gray-200">Task 3</label>
           <textarea
             className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30"
