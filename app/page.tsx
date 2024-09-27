@@ -1,6 +1,5 @@
 "use client"; 
-import { useState } from 'react';
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import StatusAndCleanButton from './components/statusAndCleanButton';
 import ChatSection from './components/chatSection';
 import TaskList from './components/taskList';
@@ -23,6 +22,15 @@ export default function Home() {
     { selectedTask: 'No Task', inputValue: '', outputValue: '' },
     { selectedTask: 'No Task', inputValue: '', outputValue: '' }
   ]);
+
+  
+  const firstTextAreaRef = useRef<HTMLTextAreaElement>(null); // Create a ref for the first textarea
+
+  useEffect(() => {
+    if (firstTextAreaRef.current) {
+      firstTextAreaRef.current.focus(); // Automatically focus on the first textarea when the component mounts
+    }
+  }, []);
 
   interface SectionState {
     selectedTask: string;
@@ -339,13 +347,14 @@ export default function Home() {
             className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 bold"
             value={sectionStates[0].inputValue}
             onChange={(e) => handleInputChange(0, e.target.value)}
-            placeholder="Put your text here"
+            placeholder="Put your text for Task 1 here"
+            ref={firstTextAreaRef}
           />
           <button
             onClick={() => toggleTaskListVisibility(0)}
             className="p-2 mt-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150"
           >
-            {taskListVisibility[0] ? "Hide the First Task List" : "Show the First Task List"}
+            {taskListVisibility[0] ? "Hide First Task List" : "Show First Task List"}
           </button>
           {taskListVisibility[0] && <TaskList tasks={taskNames} onSelectTask={(task) => handleTaskSelect(0, task)} />}
           <ChatSection
@@ -362,13 +371,13 @@ export default function Home() {
             className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30"
             value={sectionStates[1].inputValue}
             onChange={(e) => handleInputChange(1, e.target.value)}
-            placeholder="Put your text here"
+            placeholder="This will be automatically filled with the output from Task 1"
           />
           <button
             onClick={() => toggleTaskListVisibility(1)}
             className="p-2 mt-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150"
           >
-            {taskListVisibility[1] ? "Hide the Second Task List" : "Show the Second Task List"}
+            {taskListVisibility[1] ? "Hide Second Task List" : "Show Second Task List"}
           </button>
           {taskListVisibility[1] && <TaskList tasks={taskNames} onSelectTask={(task) => handleTaskSelect(1, task)} />}
           <ChatSection
@@ -385,13 +394,13 @@ export default function Home() {
             className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30"
             value={sectionStates[2].inputValue}
             onChange={(e) => handleInputChange(2, e.target.value)}
-            placeholder="Put your text here"
+            placeholder="This will be automatically filled with the output from Task 2"
           />
           <button
             onClick={() => toggleTaskListVisibility(2)}
             className="p-2 mt-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150"
           >
-            {taskListVisibility[2] ? "Hide the Third Task List" : "Show the Third Task List"}
+            {taskListVisibility[2] ? "Hide Third Task List" : "Show Third Task List"}
           </button>
           {taskListVisibility[2] && <TaskList tasks={taskNames} onSelectTask={(task) => handleTaskSelect(2, task)} />}
           <ChatSection
