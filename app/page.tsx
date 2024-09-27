@@ -11,10 +11,21 @@ export default function Home() {
   // const llmName = "Llama-3.2-1B-Instruct-q4f32_1-MLC";
   const llmName = "Qwen2.5-1.5B-Instruct-q4f32_1-MLC";
 
+  const [isRunning, setIsRunning] = useState(false);
+
+  const setIsRunningAsync = (value: boolean): Promise<void> => {
+    return new Promise((resolve) => {
+      setIsRunning(value);
+      resolve();
+    });
+  };
+
   const runAllTasks = async () => {
+    await setIsRunningAsync(true);
     for (let i = 0; i < sectionStates.length; i++) {
       await runTaskForSection(i);
     }
+    await setIsRunningAsync(false);
   };
 
   const [sectionStates, setSectionStates] = useState([
@@ -22,7 +33,6 @@ export default function Home() {
     { selectedTask: 'No Task', inputValue: '', outputValue: '' },
     { selectedTask: 'No Task', inputValue: '', outputValue: '' }
   ]);
-
   
   const firstTextAreaRef = useRef<HTMLTextAreaElement>(null); // Create a ref for the first textarea
 
@@ -337,7 +347,15 @@ export default function Home() {
       </div>
       <div className="flex flex-col items-center justify-center w-full max-w-5xl p-8 space-y-2 bg-white rounded-xl shadow-lg dark:bg-zinc-800/30 lg:space-y-4 lg:gap-4 lg:p-8 lg:bg-gray-200 lg:dark:bg-zinc-800/30">
         <StatusAndCleanButton />
-        <button className="p-2 w-full text-lg font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150" onClick={runAllTasks}>Run All</button>
+        <button className={`p-2 w-full text-lg font-semibold text-white rounded-md shadow-md ${
+                  isRunning
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-blue-500 dark:bg-blue-700 active:scale-95 transition-transform duration-150'
+                  }`}
+                onClick={runAllTasks}
+                disabled={isRunning}>
+          {isRunning ? "Running..." : "Run All"}
+        </button>
 
         {/* ChatSection 1 */}
         {/* <div className='w-full p-2 space-y-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6'> */}
