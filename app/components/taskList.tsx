@@ -6,11 +6,13 @@ interface TaskListProps {
 }
 
 const TaskList: React.FC<TaskListProps> = ({tasks, onSelectTask }) => {
+    const sortedTasks = [...tasks].sort(); 
+
     return (
         <div className="p-4 bg-gray-200 rounded-lg shadow-md dark:bg-zinc-800 space-y-4">
             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">Tasks</h2>
             <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
-                {tasks.map((task, index) => (
+                {sortedTasks.map((task, index) => (
                     <li key={index} className="flex justify-between items-center">
                         {task}
                         <button 
