@@ -32,6 +32,39 @@ export default function Home() {
     if (firstTextAreaRef.current) {
       firstTextAreaRef.current.focus(); // Automatically focus on the first textarea when the component mounts
     }
+
+    // New URL parameter handling logic
+    const params = new URLSearchParams(window.location.search);
+    const task1 = params.get('task1');
+    const task2 = params.get('task2');
+    const task3 = params.get('task3');
+    const input1 = params.get('input1');
+    const ext_url = params.get('ext_url');
+    const auto_run = params.get('auto_run') === 'true';
+
+    const updatedStates: SectionState[] = [
+      { ...sectionStates[0], selectedTask: task1 || 'No Task', inputValue: input1 || '' },
+      { ...sectionStates[1], selectedTask: task2 || 'No Task' },
+      { ...sectionStates[2], selectedTask: task3 || 'No Task' }
+    ];
+    // Update section states based on URL parameters
+    setSectionStatesAsync(updatedStates);
+    
+
+    console.log(sectionStates);
+    console.log("auto_run: ", auto_run); 
+
+    // Set ext_url for sendToApi and apiUrl
+    if (ext_url) {
+      setSendToApi(true);
+      setApiUrl(ext_url);
+    }
+
+    // Auto-run tasks if auto_run is true
+    if (auto_run) {
+      console.log("Auto-running tasks...");
+      runAllTasks();
+    }
   }, []);
 
   interface SectionState {
