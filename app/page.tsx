@@ -13,6 +13,12 @@ export default function Home() {
 
   const [isRunning, setIsRunning] = useState(false);
 
+  const hasAutoRun = useRef(false);
+
+  let sendToApi = useRef(false);
+
+  let apiURL = useRef('');
+
   const setIsRunningAsync = (value: boolean): Promise<void> => {
     return new Promise((resolve) => {
       setIsRunning(value);
@@ -25,47 +31,6 @@ export default function Home() {
     { selectedTask: 'No Task', inputValue: '', outputValue: '' },
     { selectedTask: 'No Task', inputValue: '', outputValue: '' }
   ]);
-  
-  const firstTextAreaRef = useRef<HTMLTextAreaElement>(null); // Create a ref for the first textarea
-
-  useEffect(() => {
-    if (firstTextAreaRef.current) {
-      firstTextAreaRef.current.focus(); // Automatically focus on the first textarea when the component mounts
-    }
-
-    // New URL parameter handling logic
-    const params = new URLSearchParams(window.location.search);
-    const task1 = params.get('task1');
-    const task2 = params.get('task2');
-    const task3 = params.get('task3');
-    const input1 = params.get('input1');
-    const ext_url = params.get('ext_url');
-    const auto_run = params.get('auto_run') === 'true';
-
-    const updatedStates: SectionState[] = [
-      { ...sectionStates[0], selectedTask: task1 || 'No Task', inputValue: input1 || '' },
-      { ...sectionStates[1], selectedTask: task2 || 'No Task' },
-      { ...sectionStates[2], selectedTask: task3 || 'No Task' }
-    ];
-    // Update section states based on URL parameters
-    setSectionStatesAsync(updatedStates);
-    
-
-    console.log(sectionStates);
-    console.log("auto_run: ", auto_run); 
-
-    // Set ext_url for sendToApi and apiUrl
-    if (ext_url) {
-      setSendToApi(true);
-      setApiUrl(ext_url);
-    }
-
-    // Auto-run tasks if auto_run is true
-    if (auto_run) {
-      console.log("Auto-running tasks...");
-      runAllTasks();
-    }
-  }, []);
 
   interface SectionState {
     selectedTask: string;
@@ -81,7 +46,6 @@ export default function Home() {
       resolve(newStatus);
     });
   };
-  
 
   const [taskListVisibility, setTaskListVisibility] = useState([false, false, false]);
 
@@ -95,30 +59,82 @@ export default function Home() {
     });
   };
   
-  const [sendToApi, setSendToApi] = useState(false); // State to track if the API should be triggered
-  const [apiUrl, setApiUrl] = useState(''); // State to store the API URL
+  // const [apiUrl, setApiUrl] = useState(''); // State to store the API URL
+  
+  const firstTextAreaRef = useRef<HTMLTextAreaElement>(null); // Create a ref for the first textarea
+
+  useEffect(() => {
+    console.log("!!!sendToApi has changed:", sendToApi);
+    if (firstTextAreaRef.current) {
+      firstTextAreaRef.current.focus(); // Automatically focus on the first textarea when the component mounts
+    }
+
+    // New URL parameter handling logic
+    console.log("0.09 Read window.location.href",window.location.href);
+    const params = new URLSearchParams(window.location.search);
+    console.log("0.1 Get URL Parameters: ", params.toString());
+    const task1 = params.get('task1');
+    const task2 = params.get('task2');
+    const task3 = params.get('task3');
+    const input1 = params.get('input1');
+    const ext_url = params.get('ext_url');
+    const auto_run = params.get('auto_run') === 'true';
+    console.log("0.11 Get URL Parameters: ", task1, task2, task3, input1, ext_url, auto_run);
+    console.log("0.12 Get task1 from URL Parameters: ", task1);
+    let updatedStates = [...sectionStates]; 
+    updatedStates[0].selectedTask = task1 || 'No Task';
+    updatedStates[0].inputValue = input1 || '';
+    updatedStates[1].selectedTask = task2 || 'No Task';
+    updatedStates[2].selectedTask = task3 || 'No Task';
+    console.log("0.2 Ready to run setSectionStatesAsync");
+    setSectionStates(updatedStates);
+    console.log("0.3 Finished setSectionStatesAsync");
+    console.log(sectionStates);
+    console.log("auto_run: ", auto_run); 
+
+    // Set ext_url for sendToApi and apiUrl
+    if (ext_url) {
+      sendToApi.current = true;
+      apiURL.current = ext_url;
+    }
+    console.log("!!! SendToApi:" + sendToApi.current);
+    // Auto-run tasks if auto_run is true
+    if (auto_run && !hasAutoRun.current) {
+      console.log("Auto-running tasks...");
+      console.log("0.4 Ready to run runAllTasks");
+      hasAutoRun.current = true;
+      console.log("!!! Before auto run runall SendToApi:" + sendToApi.current);
+      runAllTasks();
+    } else {
+        console.log("Tasks have been auto-run...");
+    }
+      console.log("0.5 Finished runAllTasks");
+  }, []);  
   
   // Function to handle checkbox change
   const handleCheckboxChange = () => {
-    setSendToApi(!sendToApi);
+    sendToApi.current = !sendToApi.current;
   };
 
   // Function to handle API URL change
   const handleApiUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setApiUrl(event.target.value);
+    apiURL.current = event.target.value;
   };
 
   // Function to send Task 3 output to the external API
   const sendOutputToApi = async (output: string) => {
     console.log("Sending output to API");
-    if (!apiUrl) {
+    console.log("apiUrl:", apiURL.current);
+    if (!apiURL.current) {
       alert("Please provide a valid API URL.");
       return;
     }
-    
+    console.log("output:", output);
     // Ensure that output is safely encoded for use in the URL
     const formattedOutput = encodeURIComponent(output); 
-    const fullUrl = `${apiUrl}${formattedOutput}`; // Construct the URL with the query parameter
+    console.log("apiURL:", apiURL.current);
+    console.log("formattedOutput:", formattedOutput);
+    const fullUrl = `${apiURL.current}${formattedOutput}`; // Construct the URL with the query parameter
     console.log("Ready to open URL:", fullUrl);
     // Open the URL in a new tab
     window.open(fullUrl, '_blank');
@@ -142,18 +158,23 @@ export default function Home() {
   };
 
   const runAllTasks = async () => {
+    console.log("!!! Starting auto run runall SendToApi:" + sendToApi.current);
     await setIsRunningAsync(true);
     for (let i = 0; i < sectionStates.length; i++) {
       await runTaskForSection(i);
     }
     await setIsRunningAsync(false);
-    if (sendToApi) {
+    console.log("!!! Ready to trigger ext API SendToApi:" + sendToApi.current);
+    if (sendToApi.current) {
+      console.log("API triggered");
       const task3Output = sectionStates[2].outputValue;
       if (task3Output) {
         await sendOutputToApi(task3Output);
       } else {
         alert("Task 3 output is empty. Cannot send to API.");
       }
+    } else {
+      console.log("API not triggered");
     }
   };
 
@@ -398,9 +419,6 @@ export default function Home() {
 
   const taskNames: string[] = Object.keys(taskFunctionMap);
 
-
-
-
   const handleTaskSelect = (index: number, task: string) => {
     const newSectionStates = [...sectionStates];
     newSectionStates[index] = { ...newSectionStates[index], selectedTask: task };
@@ -420,8 +438,6 @@ export default function Home() {
     newVisibility[index] = !newVisibility[index]; // Toggle the visibility of the corresponding task list
     setTaskListVisibility(newVisibility);
   };
-
-  useEffect(() => {}, []); 
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between lg:p-24 md:p-24 sm:p-5">
@@ -517,13 +533,13 @@ export default function Home() {
         {/* External API */}
         <div className="w-full p-2 space-y-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6">
           <label className="flex items-center space-x-4 cursor-pointer">
-            <input type="checkbox" className="w-5 h-5" checked={sendToApi} onChange={handleCheckboxChange} />
+            <input type="checkbox" className="w-5 h-5" checked={sendToApi.current} onChange={handleCheckboxChange} />
             <span className="text-lg font-bold text-gray-800 dark:text-gray-200">Jump to External API Using Task 3 Output</span>
           </label>
           <input 
             className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30" 
             placeholder="URL"
-            value={apiUrl}
+            value={apiURL.current}
             onChange={handleApiUrlChange} 
           />
         </div>
