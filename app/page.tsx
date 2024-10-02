@@ -15,7 +15,9 @@ export default function Home() {
 
   const hasAutoRun = useRef(false);
 
-  let sendToApi = useRef(false);
+  const [sendToApi, setSendToApi] = useState(false);
+
+  let sendToApiRef = useRef(false);
 
   let apiURL = useRef('');
 
@@ -59,9 +61,28 @@ export default function Home() {
     });
   };
   
-  // const [apiUrl, setApiUrl] = useState(''); // State to store the API URL
+  const copyTasks = async () => {
+    const task1 = sectionStates[0].selectedTask;
+    const task2 = sectionStates[1].selectedTask;
+    const task3 = sectionStates[2].selectedTask;
+    const input1 = sectionStates[0].inputValue;
+    let ext_url = encodeURIComponent(apiURL.current);
+    const base_url = window.location.href.split('?')[0];
+    // const full_url = `${base_url}?task1=${task1}&task2=${task2}&task3=${task3}&input1=${input1}&ext_url=${ext_url}&auto_run=true`;
+    const full_url = `${base_url}?task1=${task1}&task2=${task2}&task3=${task3}&input1=${input1}&ext_url=${ext_url}`;
+    // Copy to clipboard
+    await navigator.clipboard.writeText(full_url);
+    const chatStatsElement = document.getElementById("status");
+    if (chatStatsElement) {
+        chatStatsElement.textContent = "Tasks copied to clipboard";
+    }
+  };
   
   const firstTextAreaRef = useRef<HTMLTextAreaElement>(null); // Create a ref for the first textarea
+
+  useEffect(() => {
+    setSendToApi(sendToApiRef.current);
+  }, [sendToApi]);
 
   useEffect(() => {
     console.log("!!!sendToApi has changed:", sendToApi);
@@ -94,16 +115,17 @@ export default function Home() {
 
     // Set ext_url for sendToApi and apiUrl
     if (ext_url) {
-      sendToApi.current = true;
+      sendToApiRef.current = true;
+      setSendToApi(true);
       apiURL.current = ext_url;
     }
-    console.log("!!! SendToApi:" + sendToApi.current);
+    console.log("!!! SendToApi:" + sendToApi);
     // Auto-run tasks if auto_run is true
     if (auto_run && !hasAutoRun.current) {
       console.log("Auto-running tasks...");
       console.log("0.4 Ready to run runAllTasks");
       hasAutoRun.current = true;
-      console.log("!!! Before auto run runall SendToApi:" + sendToApi.current);
+      console.log("!!! Before auto run runall SendToApi:" + sendToApi);
       runAllTasks();
     } else {
         console.log("Tasks have been auto-run...");
@@ -113,7 +135,7 @@ export default function Home() {
   
   // Function to handle checkbox change
   const handleCheckboxChange = () => {
-    sendToApi.current = !sendToApi.current;
+    setSendToApi(!sendToApi);
   };
 
   // Function to handle API URL change
@@ -158,14 +180,14 @@ export default function Home() {
   };
 
   const runAllTasks = async () => {
-    console.log("!!! Starting auto run runall SendToApi:" + sendToApi.current);
+    console.log("!!! Starting auto run runall SendToApi:" + sendToApi);
     await setIsRunningAsync(true);
     for (let i = 0; i < sectionStates.length; i++) {
       await runTaskForSection(i);
     }
     await setIsRunningAsync(false);
-    console.log("!!! Ready to trigger ext API SendToApi:" + sendToApi.current);
-    if (sendToApi.current) {
+    console.log("!!! Ready to trigger ext API SendToApi:" + sendToApi);
+    if (sendToApi) {
       console.log("API triggered");
       const task3Output = sectionStates[2].outputValue;
       if (task3Output) {
@@ -533,7 +555,7 @@ export default function Home() {
         {/* External API */}
         <div className="w-full p-2 space-y-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6">
           <label className="flex items-center space-x-4 cursor-pointer">
-            <input type="checkbox" className="w-5 h-5" checked={sendToApi.current} onChange={handleCheckboxChange} />
+            <input type="checkbox" className="w-5 h-5" checked={sendToApi} onChange={handleCheckboxChange} />
             <span className="text-lg font-bold text-gray-800 dark:text-gray-200">Jump to External API Using Task 3 Output</span>
           </label>
           <input 
@@ -543,6 +565,10 @@ export default function Home() {
             onChange={handleApiUrlChange} 
           />
         </div>
+        <button className="p-2 w-full text-lg font-semibold text-white rounded-md shadow-md 'bg-blue-500 dark:bg-blue-700 active:scale-95 transition-transform duration-150"
+                onClick={copyTasks}>
+          Copy Tasks
+        </button>
       </div>
     </main>
   );
