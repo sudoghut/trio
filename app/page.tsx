@@ -91,11 +91,11 @@ export default function Home() {
     console.log("0.09 Read window.location.href",window.location.href);
     const params = new URLSearchParams(window.location.search);
     console.log("0.1 Get URL Parameters: ", params.toString());
-    const task1 = params.get('task1');
-    const task2 = params.get('task2');
-    const task3 = params.get('task3');
-    const input1 = params.get('input1');
-    const ext_url = params.get('ext_url');
+    const task1 = (params.get('task1') || '');
+    const task2 = (params.get('task2') || '');
+    const task3 = (params.get('task3') || '');
+    const input1 = (params.get('input1') || '').slice(0, 3000);
+    const ext_url = (params.get('ext_url') || '');
     const auto_run = params.get('auto_run') === 'true';
     console.log("0.11 Get URL Parameters: ", task1, task2, task3, input1, ext_url, auto_run);
     console.log("0.12 Get task1 from URL Parameters: ", task1);
@@ -318,8 +318,8 @@ export default function Home() {
       console.log("1-1 Starting Neutral Rewrite");
       const temperature = 0.8;
       const top_p = 0.6;
-      const systemPrompt = "You are tasked with rewriting text in a neutral, declarative tone. Your objective is to remove all expressions of strong emotions, subjective opinions, and replace any emotionally charged punctuation, such as exclamation marks or emphatic question marks, with neutral alternatives. Preserve the original meaning while ensuring the text cannot be easily linked to the original author's distinctive style. Avoid poetic, exaggerated, or emotionally loaded language. Your output should reflect a calm, objective, and clear tone.";
-      const prompt = "Rewrite the provided text only in its original language, without translating or altering the meaning. Remove any personal bias, vulgar language, and emotional expressions. If none of these elements are present, return the text exactly as it was provided. Do not translate or change the language in any way. Provide the rewritten text below: \n";
+      const systemPrompt = "You are tasked with rewriting text in a neutral, declarative tone. Your objective is to remove all expressions of strong emotions, subjective opinions, and replace any emotionally charged punctuation, such as exclamation marks or emphatic question marks, with neutral alternatives. Preserve the original meaning while ensuring the text cannot be easily linked to the original author's distinctive style. Avoid poetic, exaggerated, or emotionally loaded language. Don't generate any unnecessary information. Don't generate anyintroductory phrases. Don't generate any repetitive content. Only generate the output text. Your output should reflect a calm, objective, and clear tone.";
+      const prompt = "Rewrite the provided text only in its original language, without translating or altering the meaning. Remove any personal bias, vulgar language, and emotional expressions. If none of these elements are present, return the text exactly as it was provided. Do not translate or change the language in any way. Don't generate any unnecessary information. Don't generate anyintroductory phrases. Don't generate any repetitive content. Only generate the output text. Provide the rewritten text below: \n";
   
       await runLLMEngine(input, index, systemPrompt, prompt, llmName, temperature, top_p);
     },
@@ -327,7 +327,7 @@ export default function Home() {
       console.log("3-1 Starting Neutral Rewrite");
       const temperature = 0.8;
       const top_p = 0.6;
-      const systemPrompt = "Your task is to clean and polish the input text by correcting grammatical errors, fixing punctuation, removing extra spaces and unnecessary line breaks, and ensuring the text flows smoothly. Maintain the original wording and sentence structure as closely as possible to preserve the author's intent. Do not add new content or alter the meaning of the text.";
+      const systemPrompt = "Your task is to clean and polish the input text by correcting grammatical errors, fixing punctuation, removing extra spaces and unnecessary line breaks, and ensuring the text flows smoothly. Maintain the original wording and sentence structure as closely as possible to preserve the author's intent. Don't generate any unnecessary information. Don't generate anyintroductory phrases. Don't generate any repetitive content. Only generate the output text. Do not add new content or alter the meaning of the text.";
       const prompt = "Please clean the text by correcting grammar, fixing punctuation, removing extra spaces and line breaks, and keeping the original words and sentence structure as much as possible: \n";
   
       await runLLMEngine(input, index, systemPrompt, prompt, llmName, temperature, top_p);
@@ -395,24 +395,24 @@ export default function Home() {
     "Email Reply Generation": async (input, index) => {
       const temperature = 0.8;
       const top_p = 0.6;
-      const systemPrompt = "You are a language model that drafts formal and professional email replies. Your task is to generate polite, respectful, and clear responses that address the points or requests in the original email. Ensure the tone is professional, maintain proper grammar, and structure the email with clear paragraphs. The reply should acknowledge the original message and provide a courteous, thoughtful response.";
-      const prompt = "I need to draft a formal and professional reply to the following email. The reply should acknowledge the points mentioned, address any questions or requests, and offer a clear and courteous response. The tone should remain polite, professional, and respectful throughout. Here is the original email that needs a response: \n";
+      const systemPrompt = "You are a language model that drafts formal and professional email replies. Your task is to generate polite, respectful, and clear responses that address the points or requests in the original email. Ensure the tone is professional, maintain proper grammar, and structure the email with clear paragraphs. Don't generate any unnecessary information. Don't generate anyintroductory phrases. Don't generate any repetitive content. Only generate the output text. The reply should acknowledge the original message and provide a courteous, thoughtful response.";
+      const prompt = "I need to draft a formal and professional reply to the following email. The reply should acknowledge the points mentioned, address any questions or requests, and offer a clear and courteous response. Don't generate any unnecessary information. Don't generate anyintroductory phrases. Don't generate any repetitive content. Only generate the output text. The tone should remain polite, professional, and respectful throughout. Here is the original email that needs a response: \n";
   
       await runLLMEngine(input, index, systemPrompt, prompt, llmName, temperature, top_p);
     },
     "Expand Paragraph": async (input, index) => {
       const temperature = 0.8;
       const top_p = 0.6;
-      const systemPrompt = "You are a language model tasked with expanding text. Your goal is to take short paragraphs and expand them by adding relevant details, examples, and additional context, all while maintaining the original meaning. Ensure that the expansion is smooth, clear, and coherent. Avoid adding unnecessary complexity, but do provide enough elaboration to enhance the reader's understanding of the topic.";
-      const prompt = "Expand the following paragraph by adding more details, examples, and context. Ensure that the expanded version flows smoothly while keeping the original meaning intact. Use clear, concise language and aim to elaborate on the key points mentioned: \n";
+      const systemPrompt = "You are a language model tasked with expanding text. Your goal is to take short paragraphs and expand them by adding relevant details, examples, and additional context, all while maintaining the original meaning. Ensure that the expansion is smooth, clear, and coherent. Don't generate any unnecessary information. Don't generate anyintroductory phrases. Don't generate any repetitive content. Only generate the output text. Avoid adding unnecessary complexity, but do provide enough elaboration to enhance the reader's understanding of the topic.";
+      const prompt = "Expand the following paragraph by adding more details, examples, and context. Ensure that the expanded version flows smoothly while keeping the original meaning intact. Don't generate any unnecessary information. Don't generate anyintroductory phrases. Don't generate any repetitive content. Only generate the output text. Use clear, concise language and aim to elaborate on the key points mentioned: \n";
   
       await runLLMEngine(input, index, systemPrompt, prompt, llmName, temperature, top_p);
     },
     "Summarize Paragraph": async (input, index) => {
       const temperature = 0.8;
       const top_p = 0.6;
-      const systemPrompt = "You are a language model tasked with summarizing text. Your goal is to take paragraphs and condense them into shorter versions, focusing on the core message and key details. Ensure that the summary is clear, concise, and maintains the original meaning without losing important information.";
-      const prompt = "Summarize the following paragraph by condensing its key points into a shorter version. Ensure that the summary retains the main idea and important details, while removing unnecessary information or repetitive content. Use clear and concise language: \n";
+      const systemPrompt = "You are a language model tasked with summarizing text. Your goal is to take paragraphs and condense them into shorter versions, focusing on the core message and key details. Don't generate any unnecessary information. Don't generate anyintroductory phrases. Don't generate any repetitive content. Only generate the output text. Ensure that the summary is clear, concise, and maintains the original meaning without losing important information.";
+      const prompt = "Summarize the following paragraph by condensing its key points into a shorter version. Ensure that the summary retains the main idea and important details. Don't generate any unnecessary information. Don't generate anyintroductory phrases. Don't generate any repetitive content. Only generate the output text. Use clear and concise language: \n";
   
       await runLLMEngine(input, index, systemPrompt, prompt, llmName, temperature, top_p);
     },
@@ -487,8 +487,9 @@ export default function Home() {
             className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 bold"
             value={sectionStates[0].inputValue}
             onChange={(e) => handleInputChange(0, e.target.value)}
-            placeholder="Put your text for Task 1 here"
+            placeholder="Place your text for Task 1 here. The maximum word count is 3,000."
             ref={firstTextAreaRef}
+            maxLength={3000}
           />
           <button
             onClick={() => toggleTaskListVisibility(0)}
@@ -512,6 +513,7 @@ export default function Home() {
             value={sectionStates[1].inputValue}
             onChange={(e) => handleInputChange(1, e.target.value)}
             placeholder="This will be automatically filled with the output from Task 1"
+            maxLength={3000}
           />
           <button
             onClick={() => toggleTaskListVisibility(1)}
@@ -535,6 +537,7 @@ export default function Home() {
             value={sectionStates[2].inputValue}
             onChange={(e) => handleInputChange(2, e.target.value)}
             placeholder="This will be automatically filled with the output from Task 2"
+            maxLength={3000}
           />
           <button
             onClick={() => toggleTaskListVisibility(2)}

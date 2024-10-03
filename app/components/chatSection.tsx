@@ -49,6 +49,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({ selectedTask, onRunTask, outp
         value={outputValue}
         placeholder="Output"
         readOnly
+        maxLength={3000}
       />
     </div>
   );
