@@ -15,8 +15,9 @@ export default function Home() {
 
   const hasAutoRun = useRef(false);
 
+  // Use sendToAPI for manual trigger
   const [sendToApi, setSendToApi] = useState(false);
-
+  // Use sendToApiRef for auto trigger
   let sendToApiRef = useRef(false);
 
   let apiURL = useRef('');
@@ -81,10 +82,6 @@ export default function Home() {
   const firstTextAreaRef = useRef<HTMLTextAreaElement>(null); // Create a ref for the first textarea
 
   useEffect(() => {
-    setSendToApi(sendToApiRef.current);
-  }, [sendToApi]);
-
-  useEffect(() => {
     console.log("!!!sendToApi has changed:", sendToApi);
     if (firstTextAreaRef.current) {
       firstTextAreaRef.current.focus(); // Automatically focus on the first textarea when the component mounts
@@ -136,6 +133,7 @@ export default function Home() {
   // Function to handle checkbox change
   const handleCheckboxChange = () => {
     setSendToApi(!sendToApi);
+    sendToApiRef.current = !sendToApiRef.current;
   };
 
   // Function to handle API URL change
@@ -187,7 +185,7 @@ export default function Home() {
     }
     await setIsRunningAsync(false);
     console.log("!!! Ready to trigger ext API SendToApi:" + sendToApi);
-    if (sendToApi) {
+    if (sendToApi || sendToApiRef.current) {
       console.log("API triggered");
       const task3Output = sectionStates[2].outputValue;
       if (task3Output) {
@@ -560,7 +558,7 @@ export default function Home() {
           </label>
           <input 
             className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30" 
-            placeholder="URL"
+            placeholder="Put your API URL here"
             value={apiURL.current}
             onChange={handleApiUrlChange} 
           />
