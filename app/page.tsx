@@ -270,6 +270,10 @@ export default function Home() {
             onFinish(finalMessage, usage);
         } catch (err) {
             onError(err);
+            const downloadStatus = document.getElementById("status");
+            if (downloadStatus) {
+                downloadStatus.textContent = "Error: " + err;
+            }
         }
     };
 
