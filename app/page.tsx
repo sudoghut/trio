@@ -569,10 +569,13 @@ export default function Home() {
             onChange={handleApiUrlChange} 
           />
         </div>
-        <button className="p-2 w-full text-lg font-semibold text-white rounded-md shadow-md 'bg-blue-500 dark:bg-blue-700 active:scale-95 transition-transform duration-150"
+        <button className="p-2 w-full text-lg font-semibold text-white rounded-md shadow-md bg-blue-500 dark:bg-blue-700 active:scale-95 transition-transform duration-150"
                 onClick={copyTasks}>
           Copy Tasks
         </button>
+
+
+
       </div>
     </main>
   );
