@@ -234,7 +234,15 @@ export default function Home() {
             temperature: llmTemp,
             top_p: llmTopP,
         };
-        await engine.reload(selectedModel, config);
+        try {
+          await engine.reload(selectedModel, config);
+        } catch (err) {
+            console.error(err);
+            const downloadStatus = document.getElementById("status");
+            if (downloadStatus) {
+                downloadStatus.textContent = "Error: " + err;
+            }
+        }
     };
 
     const streamingGenerating = async (
