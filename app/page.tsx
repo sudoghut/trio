@@ -490,7 +490,7 @@ export default function Home() {
             className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 bold"
             value={sectionStates[0].inputValue}
             onChange={(e) => handleInputChange(0, e.target.value)}
-            placeholder="Place your text for Task 1 here. The maximum word count is 3,000."
+            placeholder="Place your text for Task 1 here. The maximum word count is 3,000"
             ref={firstTextAreaRef}
             maxLength={3000}
           />
