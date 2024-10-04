@@ -70,7 +70,7 @@ Each task section allows for a maximum input length of 3,000 characters.
 
 Special thanks to **[MerakDipper](https://github.com/MerakDipper)** for the insightful suggestions that inspired the workflow of this application.
 
-This project uses **[Next.js](https://nextjs.org/)** for the web framework and **[WebLLM](https://webllm.mlc.ai/)** for AI-powered text processing. The app is currently hosted and running on **[Vercel](https://vercel.com/)**. For the AI model, the app currently utilizes **[Qwen2.5-1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B)** from Hugging Face for production.
+This project uses **[Next.js](https://nextjs.org/)** for the web framework and **[WebLLM](https://webllm.mlc.ai/)** for AI-powered text processing. The app is currently hosted and running on **[Vercel](https://vercel.com/)**. For the AI model, the app currently utilizes **[Qwen2.5-1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B)** for production.
 
 ## License
 
