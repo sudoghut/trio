@@ -20,7 +20,8 @@ export default function Home() {
   // Use sendToApiRef for auto trigger
   let sendToApiRef = useRef(false);
 
-  let apiURL = useRef('');
+  const [apiUrl, setApiUrl] = useState('');
+  let apiUrlRef = useRef('');
 
   const setIsRunningAsync = (value: boolean): Promise<void> => {
     return new Promise((resolve) => {
@@ -67,7 +68,7 @@ export default function Home() {
     const task2 = sectionStates[1].selectedTask;
     const task3 = sectionStates[2].selectedTask;
     const input1 = sectionStates[0].inputValue;
-    let ext_url = encodeURIComponent(apiURL.current);
+    let ext_url = encodeURIComponent(apiUrl);
     const base_url = window.location.href.split('?')[0];
     // const full_url = `${base_url}?task1=${task1}&task2=${task2}&task3=${task3}&input1=${input1}&ext_url=${ext_url}&auto_run=true`;
     const full_url = `${base_url}?task1=${task1}&task2=${task2}&task3=${task3}&input1=${input1}&ext_url=${ext_url}`;
@@ -114,7 +115,8 @@ export default function Home() {
     if (ext_url) {
       sendToApiRef.current = true;
       setSendToApi(true);
-      apiURL.current = ext_url;
+      apiUrlRef.current = ext_url;
+      setApiUrl(ext_url);
     }
     console.log("!!! SendToApi:" + sendToApi);
     // Auto-run tasks if auto_run is true
@@ -138,23 +140,24 @@ export default function Home() {
 
   // Function to handle API URL change
   const handleApiUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    apiURL.current = event.target.value;
+    setApiUrl(event.target.value);
+    apiUrlRef.current = event.target.value;
   };
 
   // Function to send Task 3 output to the external API
   const sendOutputToApi = async (output: string) => {
     console.log("Sending output to API");
-    console.log("apiUrl:", apiURL.current);
-    if (!apiURL.current) {
+    console.log("apiUrl:", apiUrlRef.current);
+    if (!apiUrlRef.current) {
       alert("Please provide a valid API URL.");
       return;
     }
     console.log("output:", output);
     // Ensure that output is safely encoded for use in the URL
     const formattedOutput = encodeURIComponent(output); 
-    console.log("apiURL:", apiURL.current);
+    console.log("apiURL:", apiUrlRef.current);
     console.log("formattedOutput:", formattedOutput);
-    const fullUrl = `${apiURL.current}${formattedOutput}`; // Construct the URL with the query parameter
+    const fullUrl = `${apiUrlRef.current}${formattedOutput}`; // Construct the URL with the query parameter
     console.log("Ready to open URL:", fullUrl);
     // Open the URL in a new tab
     window.open(fullUrl, '_blank');
@@ -562,7 +565,7 @@ export default function Home() {
           <input 
             className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30" 
             placeholder="Put your API URL here"
-            value={apiURL.current}
+            value={apiUrl}
             onChange={handleApiUrlChange} 
           />
         </div>
