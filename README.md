@@ -2,7 +2,7 @@
 
 ## Overview
 
-Welcome to the TRIO Web App, a tool designed to help you perform multiple tasks on text using AI-driven models. This app allows you to run tasks such as text rewriting, cleaning, summarization, and more, either sequentially or individually. You can also send task results to an external API if needed.
+Welcome to the TRIO Web App, a tool designed to help you perform multiple tasks on text using AI-driven models. This app allows you to run tasks such as text rewriting, cleaning, summarization, and more, either sequentially or individually. You can also send task results to an external API if needed. In this project, I use WebLLM, which can download LLM models locally and run them in the browser.
 
 ## How to Use the App
 
