@@ -242,6 +242,7 @@ export default function Home() {
             if (downloadStatus) {
                 downloadStatus.textContent = "Error: " + err;
             }
+            return;
         }
     };
 
@@ -282,6 +283,7 @@ export default function Home() {
             if (downloadStatus) {
                 downloadStatus.textContent = "Error: " + err;
             }
+            return;
         }
     };
 
