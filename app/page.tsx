@@ -4,10 +4,19 @@ import StatusAndCleanButton from './components/statusAndCleanButton';
 import ChatSection from './components/chatSection';
 import TaskList from './components/taskList';
 import * as webllm from "@mlc-ai/web-llm";
+import ReactGA from 'react-ga4';
 
 const engine = new webllm.MLCEngine();
 
 export default function Home() {
+
+  ReactGA.initialize('G-PF05LLDPN8');
+
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname });
+    
+  }, []);
+
   // const llmName = "Llama-3.2-1B-Instruct-q4f32_1-MLC";
   const llmName = "Qwen2.5-1.5B-Instruct-q4f32_1-MLC";
 
