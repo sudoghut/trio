@@ -4,18 +4,10 @@ import StatusAndCleanButton from './components/statusAndCleanButton';
 import ChatSection from './components/chatSection';
 import TaskList from './components/taskList';
 import * as webllm from "@mlc-ai/web-llm";
-import ReactGA from 'react-ga4';
 
 const engine = new webllm.MLCEngine();
 
 export default function Home() {
-
-  ReactGA.initialize('G-PF05LLDPN8');
-
-  useEffect(() => {
-    ReactGA.send({ hitType: "pageview", page: window.location.pathname });
-    
-  }, []);
 
   // const llmName = "Llama-3.2-1B-Instruct-q4f32_1-MLC";
   const llmName = "Qwen2.5-1.5B-Instruct-q4f32_1-MLC";
@@ -486,6 +478,12 @@ export default function Home() {
   };
 
   return (
+    <> 
+    <script
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon='{"token": "8e54e6326fec404e9b906b4505e3a290"}'
+    ></script>
     <main className="flex min-h-screen flex-col items-center justify-between lg:p-24 md:p-24 sm:p-5">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
         <p className="flex w-full justify-center bg-gradient-to-b pb-6 pt-8 backdrop-blur-2xl dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:p-4 text-lg">
@@ -601,5 +599,6 @@ export default function Home() {
 
       </div>
     </main>
+    </>
   );
 }
