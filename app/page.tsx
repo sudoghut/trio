@@ -4,6 +4,12 @@ import StatusAndCleanButton from './components/statusAndCleanButton';
 import ChatSection from './components/chatSection';
 import TaskList from './components/taskList';
 import * as webllm from "@mlc-ai/web-llm";
+import TagManager from 'react-gtm-module'
+const tagManagerArgs = {
+  gtmId: 'G-NRK4MHCXWG'
+}
+TagManager.initialize(tagManagerArgs)
+
 
 const engine = new webllm.MLCEngine();
 
@@ -485,11 +491,15 @@ export default function Home() {
 
   return (
     <> 
+    {/* <script async src="https://www.googletagmanager.com/gtag/js?id=G-CC778X7PJN"></script>
     <script
       defer
       src="https://static.cloudflareinsights.com/beacon.min.js"
       data-cf-beacon='{"token": "8e54e6326fec404e9b906b4505e3a290"}'
-    ></script>
+    >
+
+    </script> */}
+    
     <main className="flex min-h-screen flex-col items-center justify-between lg:p-24 md:p-24 sm:p-5">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
         <p className="flex w-full justify-center bg-gradient-to-b pb-6 pt-8 backdrop-blur-2xl dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:p-4 text-lg">
