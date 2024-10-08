@@ -8,9 +8,6 @@ import TagManager from 'react-gtm-module'
 
 const engine = new webllm.MLCEngine();
 
-
-
-
 export default function Home() {
 
   useEffect(() => {
