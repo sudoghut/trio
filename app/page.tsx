@@ -5,16 +5,22 @@ import ChatSection from './components/chatSection';
 import TaskList from './components/taskList';
 import * as webllm from "@mlc-ai/web-llm";
 import TagManager from 'react-gtm-module'
-const tagManagerArgs = {
-  gtmId: 'G-NRK4MHCXWG'
-}
-TagManager.initialize(tagManagerArgs)
-
 
 const engine = new webllm.MLCEngine();
 
+
+
+
 export default function Home() {
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const tagManagerArgs = {
+        gtmId: 'G-NRK4MHCXWG',
+      };
+      TagManager.initialize(tagManagerArgs);
+    }
+  }, []);
   // const llmName = "Llama-3.2-1B-Instruct-q4f32_1-MLC";
   const llmName = "Qwen2.5-1.5B-Instruct-q4f32_1-MLC";
 
