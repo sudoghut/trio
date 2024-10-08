@@ -73,7 +73,12 @@ export default function Home() {
     const base_url = window.location.href.split('?')[0];
     // const full_url = `${base_url}?task1=${task1}&task2=${task2}&task3=${task3}&input1=${input1}&ext_url=${ext_url}&auto_run=true`;
     let full_url = `${base_url}?task1=${task1}&task2=${task2}&task3=${task3}&input1=${input1}&ext_url=${ext_url}`;
-    full_url = encodeURI(full_url);
+    //encode the URL
+    // full_url = encodeURIComponent(full_url);
+    full_url = full_url.replace(/#/g, "%23");
+    // full_url = full_url.replace(/&/g, "%26");
+    full_url = full_url.replace(/ /g, "%20");
+
     // Copy to clipboard
     await navigator.clipboard.writeText(full_url);
     const chatStatsElement = document.getElementById("status");
