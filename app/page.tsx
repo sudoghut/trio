@@ -10,6 +10,12 @@ const engine = new webllm.MLCEngine();
 
 export default function Home() {
 
+  const handleTextareaClick = (ref: React.RefObject<HTMLTextAreaElement>) => {
+    if (ref.current) {
+      ref.current.select(); // This will select the entire content of the textarea
+    }
+  };
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const tagManagerArgs = {
@@ -530,6 +536,7 @@ export default function Home() {
             className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 bold"
             value={sectionStates[0].inputValue}
             onChange={(e) => handleInputChange(0, e.target.value)}
+            onClick={() => handleTextareaClick(firstTextAreaRef)}
             placeholder="Place your text for Task 1 here. The maximum word count is 3,000"
             ref={firstTextAreaRef}
             maxLength={3000}
