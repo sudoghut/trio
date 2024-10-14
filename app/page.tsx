@@ -362,6 +362,15 @@ export default function Home() {
   
       await runLLMEngine(input, index, systemPrompt, prompt, llmName, temperature, top_p);
     },
+    "Positive Rewrite": async (input, index) => {
+      console.log("1-1 Starting Positive Rewrite with Energy!");
+      const temperature = 0.8;
+      const top_p = 0.6;
+      const systemPrompt = "You are tasked with rewriting text in an energetic, confident, and assertive tone. Your objective is to infuse the text with positivity, enthusiasm, and a sense of urgency. Use uplifting language, strong action verbs, and assertive punctuation, such as exclamation marks or confident question marks. Keep the original meaning but make the tone inspiring and full of energy. Avoid any negativity, passive language, or hesitation. Don't generate any unnecessary information. Don't generate anyintroductory phrases. Don't generate any repetitive content. Only generate the output text. Your output should reflect a bold, energetic, and encouraging style.";
+      const prompt = "Rewrite the provided text only in its original language, keeping the original meaning intact but enhancing the energy and positivity. Infuse it with enthusiasm, assertiveness, and a can-do attitude. If the text already contains these elements, keep it as is. Do not translate or change the language in any way. Don't generate any unnecessary information. Don't generate anyintroductory phrases. Don't generate any repetitive content. Only generate the output text. Provide the rewritten text below: \n";
+
+      await runLLMEngine(input, index, systemPrompt, prompt, llmName, temperature, top_p);
+    },
     "Clean Text": async (input, index) => {
       console.log("3-1 Starting Neutral Rewrite");
       const temperature = 0.8;
