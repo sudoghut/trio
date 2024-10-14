@@ -93,6 +93,8 @@ export default function Home() {
     full_url = full_url.replace(/#/g, "%23");
     // full_url = full_url.replace(/&/g, "%26");
     full_url = full_url.replace(/ /g, "%20");
+    //replace enter with %0A
+    full_url = full_url.replace(/\n/g, "%0A");
 
     // Copy to clipboard
     await navigator.clipboard.writeText(full_url);

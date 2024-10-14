@@ -1,5 +1,7 @@
 # TRIO Web App - User Guide
 
+[Try an example here: Clean Text, Summarize Paragraph, Email Reply Generation, and Translate to French](https://trio.oopus.info/?task1=Clean%20Text&task2=Summarize%20Paragraph&task3=Email%20Reply%20Generation&input1=Now%20pile%20your%20dust%20upon%20the%20quick%20and%20dead,%0A%0ATill%20of%20this%20flat%20a%20mountain%20you%20have%20made,%0A%0ATo%20o'ertop%20old%20Pelion,40%20or%20the%20skyish%20head%0A%0AOf%20blue%20Olympus.%0A%0AHam.%20(Advancing.)%20What%20is%20he%20whose%20grief%0A%0ABears%20such%20an%20emphasis?—whose%20phrase%20of%20sorrow%0A%0A95%0AConjures%20the%20wand'ring%20stars,%20and%20makes%20them%20stand%0A%0ALike%20wonder-wounded%20hearers?—this%20is%20I,%0A%0AHamlet%20the%20Dane.%0A%0ALaer.%20(L.,%20leaping%20from%20the%20grave.)%20The%20devil%20take%20thy%20soul!&ext_url=https://www.deepl.com/en/translator%23en/fr/) - This link demonstrates how the app can clean text, summarize a paragraph, generate an email reply, and send the final output to DeepL for translation into French, showcasing the sequential workflow and the capabilities of TRIO Web App. Click the "Run All" button to try it..
+
 ## Overview
 
 Welcome to the TRIO Web App, a tool designed to help you perform multiple tasks on text using AI-driven models. This app allows you to run tasks such as text rewriting, cleaning, summarization, and more, either sequentially or individually. You can also send task results to an external API if needed. In this project, I use WebLLM, which can download LLM models locally and run them in the browser.
@@ -9,7 +11,7 @@ Welcome to the TRIO Web App, a tool designed to help you perform multiple tasks 
 ### Main Features
 
 1. **Three Task Sections**: The app consists of three sections where you can input text and select a task for each section. The output from one task can automatically feed into the next, enabling smooth transitions between tasks.
-2. **Task Selection**: For each section, you can choose a specific task from a list of predefined options such as "Neutral Rewrite", "Clean Text", and more.
+2. **Task Selection**: For each section, you can choose a specific task from a list of predefined options such as "Neutral Rewrite," "Clean Text," and more.
 3. **External API Integration**: You can send the output of the third task to an external API by providing the API URL.
 4. **Copy Task Details**: Copy the task details and their results, along with URL parameters, to share with others or save for later use.
 
