@@ -4,7 +4,6 @@ import StatusAndCleanButton from './components/statusAndCleanButton';
 import ChatSection from './components/chatSection';
 import TaskList from './components/taskList';
 import * as webllm from "@mlc-ai/web-llm";
-import TagManager from 'react-gtm-module'
 import { Analytics } from "@vercel/analytics/react"
 
 const engine = new webllm.MLCEngine();
@@ -16,15 +15,6 @@ export default function Home() {
       ref.current.select(); // This will select the entire content of the textarea
     }
   };
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const tagManagerArgs = {
-        gtmId: 'G-NRK4MHCXWG',
-      };
-      TagManager.initialize(tagManagerArgs);
-    }
-  }, []);
   // const llmName = "Llama-3.2-1B-Instruct-q4f32_1-MLC";
   const llmName = "Qwen2.5-1.5B-Instruct-q4f32_1-MLC";
 
