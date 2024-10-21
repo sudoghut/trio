@@ -40,8 +40,8 @@ const ChatSection: React.FC<ChatSectionProps> = ({ selectedTask, onRunTask, outp
         <label className="text-lg text-gray-800 dark:text-gray-200">{selectedTask || "No Task"}</label>
       </div>
       <div className="flex space-x-4 ">
-        <button onClick={onRunTask} className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150">Run Me</button>
-        <button onClick={copyText} className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150">Copy Result</button>
+        <button onClick={onRunTask} className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150">▶ Run Me</button>
+        <button onClick={copyText} className="p-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150">📋 Copy Result</button>
       </div>
       <textarea
         ref={chatBoxRef}

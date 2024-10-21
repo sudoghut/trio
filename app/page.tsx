@@ -364,7 +364,7 @@ export default function Home() {
 
       await runLLMEngine(input, index, systemPrompt, prompt, llmName, temperature, top_p);
     },
-    "Clean Text": async (input, index) => {
+    "Clean text (grammar, line breaks, etc.)": async (input, index) => {
       console.log("3-1 Starting Neutral Rewrite");
       const temperature = 0.8;
       const top_p = 0.6;
@@ -534,9 +534,9 @@ export default function Home() {
         {/* ChatSection 1 */}
         {/* <div className='w-full p-2 space-y-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6'> */}
         <div className={`w-full p-2 space-y-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6 ${highlightedSection === 0 ? 'border-2 border-yellow-400' : ''}`}>
-          <label className="text-lg font-bold text-gray-800 dark:text-gray-200">Task 1</label>
+          <label className="text-lg font-bold text-gray-800 dark:text-gray-200">🎯 Task 1</label>
           <textarea
-            className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 bold"
+            className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-500/30 h-30 bold border border-blue-300"
             value={sectionStates[0].inputValue}
             onChange={(e) => handleInputChange(0, e.target.value)}
             onClick={() => handleTextareaClick(firstTextAreaRef)}
@@ -548,7 +548,7 @@ export default function Home() {
             onClick={() => toggleTaskListVisibility(0)}
             className="p-2 mt-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150"
           >
-            {taskListVisibility[0] ? "Hide First Task List" : "Show First Task List"}
+            {taskListVisibility[0] ? "Hide First Task List" : "📝 Show First Task List"}
           </button>
           {taskListVisibility[0] && <TaskList tasks={taskNames} onSelectTask={(task) => handleTaskSelect(0, task)} />}
           <ChatSection
@@ -560,9 +560,9 @@ export default function Home() {
 
         {/* ChatSection 2 */}
         <div className={`w-full p-2 space-y-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6 ${highlightedSection === 1 ? 'border-2 border-yellow-400' : ''}`}>
-          <label className="text-lg font-bold text-gray-800 dark:text-gray-200">Task 2</label>
+          <label className="text-lg font-bold text-gray-800 dark:text-gray-200">🎯 Task 2</label>
           <textarea
-            className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30"
+            className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-500/30 h-30 border border-blue-300"
             value={sectionStates[1].inputValue}
             onChange={(e) => handleInputChange(1, e.target.value)}
             placeholder="This will be automatically filled with the output from Task 1"
@@ -572,7 +572,7 @@ export default function Home() {
             onClick={() => toggleTaskListVisibility(1)}
             className="p-2 mt-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150"
           >
-            {taskListVisibility[1] ? "Hide Second Task List" : "Show Second Task List"}
+            {taskListVisibility[1] ? "Hide Second Task List" : "📝 Show Second Task List"}
           </button>
           {taskListVisibility[1] && <TaskList tasks={taskNames} onSelectTask={(task) => handleTaskSelect(1, task)} />}
           <ChatSection
@@ -584,9 +584,9 @@ export default function Home() {
 
         {/* ChatSection 3 */}
         <div className={`w-full p-2 space-y-4 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30 mt-6 ${highlightedSection === 2 ? 'border-2 border-yellow-400' : ''}`}>
-          <label className="text-lg font-bold text-gray-800 dark:text-gray-200">Task 3</label>
+          <label className="text-lg font-bold text-gray-800 dark:text-gray-200">🎯 Task 3</label>
           <textarea
-            className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-800/30 h-30"
+            className="w-full p-2 text-lg bg-gray-100 rounded-lg dark:bg-zinc-500/30 h-30 border border-blue-300"
             value={sectionStates[2].inputValue}
             onChange={(e) => handleInputChange(2, e.target.value)}
             placeholder="This will be automatically filled with the output from Task 2"
@@ -596,7 +596,7 @@ export default function Home() {
             onClick={() => toggleTaskListVisibility(2)}
             className="p-2 mt-2 text-base font-semibold text-white bg-blue-500 rounded-md shadow-md dark:bg-blue-700 active:scale-95 transition-transform duration-150"
           >
-            {taskListVisibility[2] ? "Hide Third Task List" : "Show Third Task List"}
+            {taskListVisibility[2] ? "Hide Third Task List" : "📝 Show Third Task List"}
           </button>
           {taskListVisibility[2] && <TaskList tasks={taskNames} onSelectTask={(task) => handleTaskSelect(2, task)} />}
           <ChatSection
