@@ -1,12 +1,112 @@
 "use client"; 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, use } from 'react';
 import StatusAndCleanButton from './components/statusAndCleanButton';
 import ChatSection from './components/chatSection';
 import TaskList from './components/taskList';
 import * as webllm from "@mlc-ai/web-llm";
 import { Analytics } from "@vercel/analytics/react"
+import wiki from 'wikipedia';
+import { wikiSummary, summaryError } from 'wikipedia';
+import {franc} from 'franc'
 
 const engine = new webllm.MLCEngine();
+const francToWiki: Record<string, string> = {
+  "cmn": "zh",
+  "spa": "es",
+  "eng": "en",
+  "rus": "ru",
+  "arb": "ar",
+  "ben": "bn",
+  "hin": "hi",
+  "por": "pt",
+  "ind": "id",
+  "jpn": "ja",
+  "fra": "fr",
+  "deu": "de",
+  "jav": "jv",
+  "kor": "ko",
+  "tel": "te",
+  "vie": "vi",
+  "mar": "mr",
+  "ita": "it",
+  "tam": "ta",
+  "tur": "tr",
+  "urd": "ur",
+  "guj": "gu",
+  "pol": "pl",
+  "ukr": "uk",
+  "kan": "kn",
+  "mai": "mai",
+  "mal": "ml",
+  "pes": "fa",
+  "mya": "my",
+  "swh": "sw",
+  "sun": "su",
+  "ron": "ro",
+  "pan": "pa",
+  "bho": "bho",
+  "amh": "am",
+  "hau": "ha",
+  "fuv": "ff",
+  "bos": "bs",
+  "hrv": "hr",
+  "nld": "nl",
+  "srp": "sr",
+  "tha": "th",
+  "ckb": "ckb",
+  "yor": "yo",
+  "uzn": "uz",
+  "zlm": "ms",
+  "ibo": "ig",
+  "npi": "ne",
+  "ceb": "ceb",
+  "skr": "skr",
+  "tgl": "tl",
+  "hun": "hu",
+  "azj": "az",
+  "sin": "si",
+  "ell": "el",
+  "ces": "cs",
+  "bel": "be",
+  "plt": "mg",
+  "kin": "rw",
+  "zul": "zu",
+  "bul": "bg",
+  "swe": "sv",
+  "lin": "ln",
+  "som": "so",
+  "ilo": "ilo",
+  "kaz": "kk",
+  "hat": "ht",
+  "khm": "km",
+  "prs": "prs",
+  "hil": "hil",
+  "sna": "sn",
+  "tat": "tt",
+  "xho": "xh",
+  "afr": "af",
+  "lua": "lua",
+  "sat": "sat",
+  "bod": "bo",
+  "tir": "ti",
+  "fin": "fi",
+  "slk": "sk",
+  "dan": "da",
+  "heb": "he",
+  "cat": "ca",
+  "lit": "lt",
+  "mkd": "mk",
+  "epo": "eo",
+  "tpi": "tpi",
+  "men": "men",
+  "fon": "fon",
+  "bem": "bem",
+  "pam": "pam",
+  "ven": "ve",
+  "ssw": "ssq",
+  "nso": "nso",
+  "ace": "ace"
+};
 
 export default function Home() {
 
@@ -21,6 +121,11 @@ export default function Home() {
   const [isRunning, setIsRunning] = useState(false);
 
   const hasAutoRun = useRef(false);
+
+  let tempOutput = useRef("");
+
+  // for wikiepedia search
+  let terms = useRef([]);
 
   // Use sendToAPI for manual trigger
   const [sendToApi, setSendToApi] = useState(false);
@@ -296,6 +401,8 @@ export default function Home() {
     const updateLastMessage = (content: string) => {
         console.log("1-6 Updating Last Message");
         output = content;
+        // for the next generation
+        tempOutput.current = content;
         setSectionStates(prevStates => {
             const newSectionStates = [...prevStates];
             newSectionStates[index].outputValue = output; // Update output value continuously
@@ -474,7 +581,76 @@ export default function Home() {
       }
       console.log("2-2 New Section States - final");
       await setSectionStatesAsync(updatedStates);
-    }
+    },
+    "Expand Paragraph with Wikipedia": async (input, index) => {
+      console.log("5-1 Starting Expand Paragraph with Wikipedia");
+      const temperature = 0.8;
+      const top_p = 0.6;
+      const systemPromptToExtractJson = "You are a language model tasked with identifying key terms from a given paragraph. Extract the three most important terms and return them in JSON format with the structure: { 'terms': ['term1', 'term2', 'term3'] }. Ensure the terms are concise and reflect the core topics or concepts of the paragraph.";
+      const promptToExtractJson = "Extract the three most important terms and provide the output in JSON format as: { 'terms': ['term1', 'term2', 'term3'] } from the following paragraph: \n";
+      const systemPromptForWikiGen ="Elaborate on the given text using only the provided materials. The rewrite text should maintaining consistency with the original material."
+      const promptForWikiData = "Using exclusively the following materials: \n\"";
+      const promptForOriginalQuery = "\", rewrite upon this text:\""
+      const promptForGen = "\". In your expansion, ensure that your rewrite version remains consistent with the original text, avoiding any additions beyond the given content."
+      console.log("5-2 Running LLM Engine for Extracting Terms");
+      await runLLMEngine(input, index, systemPromptToExtractJson, promptToExtractJson, llmName, temperature, top_p);
+      try {
+        tempOutput.current = tempOutput.current.replace("```json", "");
+        tempOutput.current = tempOutput.current.replace("```", "");
+        console.log("5-3 Checking the JSON format of the extracted terms");
+        const json = JSON.parse(tempOutput.current);
+        console.log("5-4 JSON format of the extracted terms");
+        if (json.terms) {
+          console.log("5-5 Extracted terms: ", json.terms);
+          terms.current = json.terms;
+        }
+        console.log("5-6 Extracted terms: ", terms.current);
+        console.log(terms.current)
+      } catch (e) {
+        const errorMsg = "Error: " + e
+        const chatStatsElement = document.getElementById("status");
+        if (chatStatsElement) {
+            chatStatsElement.textContent = errorMsg;
+        }
+        // await runTaskForSection(index);
+      }
+      console.log("5-7 check the length of terms.current", terms.current.length);
+      if (terms.current.length > 0) {
+        console.log("5-8 terms.current.length > 0");
+        let ragData = "";
+        let summary: wikiSummary;
+        for (const term of terms.current) {
+          console.log("5-9 Looping through the terms:", term);
+          console.log("5-10 Language of the term:", franc(term, { minLength: 1 }));
+          const lang = francToWiki[franc(term, { minLength: 1 })];
+          console.log("5-10 Language of the term:", lang);
+          try {
+            await wiki.setLang(lang);
+            summary = await wiki.summary(term);
+            console.log("5-11 Summary from Wikipedia:", summary);
+            ragData += summary.extract + "\n";
+          } catch (e) {
+            console.log("5-12 Error from Wikipedia:", e);
+            const errorMsg = "Error: "+ e
+            const chatStatsElement = document.getElementById("status");
+            if (chatStatsElement) {
+                chatStatsElement.textContent = errorMsg;
+            }
+          }
+        }
+        console.log("5-12 ragData:", ragData);
+        const promptForGenComplete = promptForWikiData + ragData + promptForOriginalQuery + input + promptForGen;
+        console.log("5-13 promptForGenComplete:", promptForGenComplete);
+        await runLLMEngine(input, index, systemPromptForWikiGen, promptForGenComplete, llmName, temperature, top_p);
+      } else{
+        console.log("5-13 terms.current.length <= 0");
+        const chatStatsElement = document.getElementById("status");
+        if (chatStatsElement) {
+            chatStatsElement.textContent = "Can't find the terms to search in Wikipedia";
+        }
+      }
+
+    },
   };
   
 
