@@ -632,7 +632,7 @@ export default function Home() {
             // get the first 1000 characters of the content
             // console.log("5-11 Content from Wikipedia:", content);
             const content1000 = content.slice(0, 1000);
-            console.log("5-11 left 1000 characters of the content:", content1000);
+            // console.log("5-11 left 1000 characters of the content:", content1000);
             ragData += content1000 + "\n";
           } catch (e) {
             console.log("5-12 Error from Wikipedia:", e);
