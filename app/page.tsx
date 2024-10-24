@@ -643,6 +643,14 @@ export default function Home() {
             }
           }
         }
+        // if can't find the terms in Wikipedia
+        if (ragData.replace(/\n/g, "").length === 0) {
+          const chatStatsElement = document.getElementById("status");
+          if (chatStatsElement) {
+              chatStatsElement.textContent = "Can't find the terms in Wikipedia";
+          }
+          return;
+        }
         console.log("5-12 ragData:", ragData);
         const promptForGenComplete = promptForWikiData + ragData + promptForOriginalQuery + input + promptForGen;
         console.log("5-13 promptForGenComplete:", promptForGenComplete);
@@ -651,7 +659,7 @@ export default function Home() {
         console.log("5-13 terms.current.length <= 0");
         const chatStatsElement = document.getElementById("status");
         if (chatStatsElement) {
-            chatStatsElement.textContent = "Can't find the terms to search in Wikipedia";
+            chatStatsElement.textContent = "Can't find the terms in your prompt";
         }
       }
 
