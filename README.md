@@ -32,6 +32,7 @@ For each section, you can choose from a list of tasks by clicking the "Show Task
 - **Email Reply Generation**: Generates a polite and professional email reply based on the provided input.
 - **Summarize Paragraph**: Condenses the text into a shorter version while maintaining its core message.
 - **Expand Paragraph**: Expands a short paragraph by adding more details and context.
+- **Expand Paragraph with Wikipedia**: Enhances a short paragraph by incorporating additional information from Wikipedia to provide more details and context.
 - **Redo Previous Cell**: Repeats the task from the previous section with updated input.
 
 Once you've selected a task, click "Run Task" for each section to execute the task.
