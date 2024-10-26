@@ -628,7 +628,8 @@ export default function Home() {
             await wiki.setLang(lang);
             // summary = await wiki.summary(term);
             const page = await wiki.page(term);
-            const content = await page.content({redirect: false});
+            // const content = await page.content({redirect: false});
+            const content = await page.intro({redirect: false});
             // get the first 1000 characters of the content
             // console.log("5-11 Content from Wikipedia:", content);
             const content1000 = content.slice(0, 1000);
