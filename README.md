@@ -27,12 +27,14 @@ Each of the three sections allows you to input text to be processed by a selecte
 #### Step 2: Select Tasks
 For each section, you can choose from a list of tasks by clicking the "Show Task List" button. The available tasks include:
 
-- **Neutral Rewrite**: Rewrites the input text in a neutral tone.
 - **Clean Text**: Corrects grammar, punctuation, and formatting issues.
 - **Email Reply Generation**: Generates a polite and professional email reply based on the provided input.
-- **Summarize Paragraph**: Condenses the text into a shorter version while maintaining its core message.
 - **Expand Paragraph**: Expands a short paragraph by adding more details and context.
+- **Expand Paragraph with Wikipedia**: Enhances a short paragraph by incorporating additional information from Wikipedia to provide more details and context.
+- **Neutral Rewrite**: Rewrites the input text in a neutral tone.
+- **Positive Rewrite**: Rewrites the input text in a positive and encouraging tone, emphasizing strengths and optimism
 - **Redo Previous Cell**: Repeats the task from the previous section with updated input.
+- **Summarize Paragraph**: Condenses the text into a shorter version while maintaining its core message.
 
 Once you've selected a task, click "Run Task" for each section to execute the task.
 
