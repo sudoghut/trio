@@ -651,7 +651,7 @@ export default function Home() {
           }
           return;
         }
-        console.log("5-12 ragData:", ragData);
+        // console.log("5-12 ragData:", ragData);
         const promptForGenComplete = promptForWikiData + ragData + promptForOriginalQuery + input + promptForGen;
         console.log("5-13 promptForGenComplete:", promptForGenComplete);
         await runLLMEngine(input, index, systemPromptForWikiGen, promptForGenComplete, llmName, temperature, top_p);
