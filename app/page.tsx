@@ -582,14 +582,14 @@ export default function Home() {
       console.log("2-2 New Section States - final");
       await setSectionStatesAsync(updatedStates);
     },
-    "Expand Paragraph with Wikipedia": async (input, index) => {
+    "Wikipedia: Expand Paragraph": async (input, index) => {
       console.log("5-1 Starting Expand Paragraph with Wikipedia");
       const temperature = 0.8;
       const top_p = 0.6;
       const systemPromptToExtractJson = "You are a language model tasked with identifying key terms from a given paragraph. Extract the three most important terms and return them in JSON format with the structure: { 'terms': ['term1', 'term2', 'term3'] }. Ensure the terms are concise and reflect the core topics or concepts of the paragraph.";
       const promptToExtractJson = "Extract the three most important terms and provide the output in JSON format as: { 'terms': ['term1', 'term2', 'term3'] } from the following paragraph: \n";
       const systemPromptForWikiGen ="Elaborate on the given text using only the provided materials. The rewrite text should maintaining consistency with the original material."
-      const promptForWikiData = "Using exclusively the following materials: \n\"";
+      const promptForWikiData = "Using exclusively the following materials(skip the related information for rewrite): \n\"";
       const promptForOriginalQuery = "\", rewrite upon this text:\""
       const promptForGen = "\". In your expansion, ensure that your rewrite version remains consistent with the original text, avoiding any additions beyond the given content."
       console.log("5-2 Running LLM Engine for Extracting Terms");
