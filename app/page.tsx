@@ -115,7 +115,8 @@ export default function Home() {
       ref.current.select(); // This will select the entire content of the textarea
     }
   };
-  // const llmName = "Llama-3.2-1B-Instruct-q4f32_1-MLC";
+  
+  // const llmName = "SmolLM2-1.7B-Instruct-q4f32_1-MLC";
   const llmName = "Qwen2.5-1.5B-Instruct-q4f32_1-MLC";
 
   const [isRunning, setIsRunning] = useState(false);
@@ -587,11 +588,11 @@ export default function Home() {
       const temperature = 0.8;
       const top_p = 0.6;
       const systemPromptToExtractJson = "You are a language model tasked with identifying key terms from a given paragraph. Extract the three most important terms and return them in JSON format with the structure: { 'terms': ['term1', 'term2', 'term3'] }. Ensure the terms are concise and reflect the core topics or concepts of the paragraph.";
-      const promptToExtractJson = "Extract the three most important terms and provide the output in JSON format as: { 'terms': ['term1', 'term2', 'term3'] } from the following paragraph: \n";
+      const promptToExtractJson = "Extract the three most important terms and provide the output in JSON format as: { \"terms\": [\"term1\", \"term2\", \"term3\"] } from the following paragraph. `List the terms in descending order of importance`. Don't generate anything else but the json: \n";
       const systemPromptForWikiGen ="Elaborate on the given text using only the provided materials. The rewrite text should maintaining consistency with the original material."
-      const promptForWikiData = "Using exclusively the following materials(skip the related information for rewrite): \n\"";
-      const promptForOriginalQuery = "\", rewrite upon this text:\""
-      const promptForGen = "\". In your expansion, ensure that your rewrite version remains consistent with the original text, avoiding any additions beyond the given content."
+      const promptForWikiData = "\"\nBased on exclusively the following materials(skip the related information for rewrite): \n\"";
+      const promptForOriginalQuery = "\nRewrite upon this text:\n\""
+      const promptForGen = "\".\nIn your expansion, ensure that your rewrite version remains consistent with the original text, avoiding any additions beyond the given content."
       console.log("5-2 Running LLM Engine for Extracting Terms");
       await runLLMEngine(input, index, systemPromptToExtractJson, promptToExtractJson, llmName, temperature, top_p);
       try {
@@ -603,6 +604,8 @@ export default function Home() {
         if (json.terms) {
           console.log("5-5 Extracted terms: ", json.terms);
           terms.current = json.terms;
+        } else {
+          console.log("5-5 Extracted terms: ", terms.current);
         }
         console.log("5-6 Extracted terms: ", terms.current);
         console.log(terms.current)
@@ -653,7 +656,7 @@ export default function Home() {
           return;
         }
         // console.log("5-12 ragData:", ragData);
-        const promptForGenComplete = promptForWikiData + ragData + promptForOriginalQuery + input + promptForGen;
+        const promptForGenComplete = promptForOriginalQuery + input + promptForWikiData + ragData + promptForGen;
         console.log("5-13 promptForGenComplete:", promptForGenComplete);
         await runLLMEngine(input, index, systemPromptForWikiGen, promptForGenComplete, llmName, temperature, top_p);
       } else{
